@@ -1,0 +1,17 @@
+﻿using SocialMedia.Core.Entities.DTO;
+using SocialMedia.Core.Entities.PostEntity;
+
+namespace SocialMedia.Infrastructure.Repositories
+{
+    public interface ILikeRepository
+    {
+        Task<IEnumerable<Like>> GetAllLikes();
+        Task<Like> GetLikeById(int id);
+        Task AddLike(Like like);
+        Task UpdateLike(Like like);
+        Task DeleteLike(int id);
+        Task<Like?> GetLikeByUserAndPost(string userId, int postId);
+        Task<IEnumerable<Like>> GetLikesByPostId(int postId);
+
+    }
+}

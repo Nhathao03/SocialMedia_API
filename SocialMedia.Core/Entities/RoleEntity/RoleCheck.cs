@@ -1,0 +1,17 @@
+﻿using SocialMedia.Core.Entities.Entity;
+using System.ComponentModel.DataAnnotations;
+
+namespace SocialMedia.Core.Entities.RoleEntity
+{
+    public class RoleCheck
+    {
+        [Key]
+        public int Id { get; set; }
+        public string UserID { get; set; } = null!;
+        public string RoleID { get; set; }
+
+        // Relationship
+        public Role? Role { get; set; }
+        public User? User { get; set; }
+    }
+}

@@ -1,0 +1,50 @@
+﻿using Microsoft.EntityFrameworkCore;
+using SocialMedia.Core.Entities.UserEntity;
+using SocialMedia.Core.Interfaces.RepositoriesInterfaces;
+using SocialMedia.Infrastructure.Data;
+
+namespace SocialMedia.Infrastructure.Repositories
+{
+    public class AddressRepository :IAddressRepository
+    {
+        private readonly AppDbContext _context;
+
+        public AddressRepository(AppDbContext context)
+        {
+            _context = context;
+        }
+
+        public async Task<IEnumerable<Address>> GetAllAddress()
+        {
+            return await _context.addresses.ToListAsync();
+        }
+
+        public async Task<Address> GetAddressById(int id)
+        {
+            return await _context.addresses.FirstOrDefaultAsync(p => p.ID == id);
+        }
+
+        public async Task UpdateAddress(Address Address)
+        {
+            _context.addresses.Update(Address);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task DeleteAddress(int id)
+        {
+            var Address = await _context.addresses.FindAsync(id);
+            if (Address != null)
+            {
+                _context.addresses.Remove(Address);
+                await _context.SaveChangesAsync();
+            }
+        }
+
+        public async Task<int> AddNewAddress(Address address)
+        {
+            var data = _context.addresses.Add(address);
+            await _context.SaveChangesAsync();
+            return data.Entity.ID;
+        }
+    }
+}
