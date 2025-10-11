@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using SocialMedia.Core.Entities.DTO.AccountUser;
+using SocialMedia.Core.Entities.DTO.Account;
 using SocialMedia.Core.Entities.Entity;
 using SocialMedia.Infrastructure.Data;
 using System.Text;
@@ -20,7 +20,7 @@ namespace SocialMedia.Infrastructure.Repositories
             return await _context.users.ToListAsync();
         }
 
-        public async Task<User> GetUserById(string id)
+        public async Task<User?> GetUserById(string id)
         {
             return await _context.users.FirstOrDefaultAsync(p => p.Id == id);
         }
@@ -29,24 +29,25 @@ namespace SocialMedia.Infrastructure.Repositories
         {
             return await _context.users.FirstOrDefaultAsync(p => p.Email == email);
         }
-        public async Task UpdateUser(User user)
+        public async Task<User?> UpdateUser(User user)
         {
             _context.users.Update(user);
             await _context.SaveChangesAsync();
+            return user;
         }
 
-        public async Task DeleteUser(string id)
+        public async Task<bool> DeleteUser(string id)
         {
             var user = await _context.users.FindAsync(id);
-            if (user != null)
-            {
-                _context.users.Remove(user);
-                await _context.SaveChangesAsync();
-            }
+            if (user is null)
+                return false;
+            _context.users.Remove(user);
+            await _context.SaveChangesAsync();
+            return true;
         }
 
         //Register account
-        public async Task<User> RegisterAccount(User user)
+        public async Task<User?> RegisterAccount(User user)
         {
             _context.AddAsync(user);
             await _context.SaveChangesAsync();
@@ -85,5 +86,10 @@ namespace SocialMedia.Infrastructure.Repositories
             return false; // Password is incorrect
         }
 
+        // Get user by refresh token
+        public User? GetUserByRefreshToken(string refreshToken)
+        {
+            return _context.users.FirstOrDefault(u => u.RefreshToken == refreshToken && u.RefreshTokenExpiryTime > DateTime.UtcNow);
+        }
     }
 }

@@ -7,7 +7,10 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using SocialMedia.Infrastructure.Data;
 using SocialMedia.Core.Interfaces.RepositoriesInterfaces;
-using System;
+using AutoMapper;
+using Microsoft.Extensions.DependencyInjection;
+using SocialMedia.Core.Mapping;
+using SocialMedia.Core.Interfaces.ServiceInterfaces;
 
 namespace SocialMedia.API
 {
@@ -72,6 +75,10 @@ namespace SocialMedia.API
             builder.Services.AddScoped<ISearchService, SearchService>();
             builder.Services.AddScoped<INotificationService, NotificationService>();
             builder.Services.AddScoped<IReportService, ReportService>();
+            builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+
+            // register the AutoMapper services
+            builder.Services.AddAutoMapper(typeof(AccountMapping));
 
             // Add Identity services
             builder.Services.AddScoped<EmailService>();
@@ -118,8 +125,6 @@ namespace SocialMedia.API
             app.UseResponseCaching();
             app.UseAuthentication();
             app.UseAuthorization();
-
-            app.MapGet("/user", () => "Hello World!");
             app.MapControllers();
 
             app.Run();

@@ -1,4 +1,4 @@
-﻿namespace SocialMedia.Core.Entities.DTO.AccountUser
+﻿namespace SocialMedia.Core.Entities.DTO.Account
 {
     public class LoginDTO
     {

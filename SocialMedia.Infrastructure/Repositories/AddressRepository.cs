@@ -14,37 +14,38 @@ namespace SocialMedia.Infrastructure.Repositories
             _context = context;
         }
 
-        public async Task<IEnumerable<Address>> GetAllAddress()
+        public async Task<List<Address>> GetAllAddressAsync()
         {
             return await _context.addresses.ToListAsync();
         }
 
-        public async Task<Address> GetAddressById(int id)
+        public async Task<Address> GetAddressByIdAsync(int id)
         {
-            return await _context.addresses.FirstOrDefaultAsync(p => p.ID == id);
+            return await _context.addresses.FindAsync(id);
         }
 
-        public async Task UpdateAddress(Address Address)
+        public async Task<Address?> UpdateAddressAsync(Address address)
         {
-            _context.addresses.Update(Address);
+            _context.addresses.Update(address);
             await _context.SaveChangesAsync();
+            return address;
         }
 
-        public async Task DeleteAddress(int id)
+        public async Task<bool> DeleteAddressAsync(int id)
         {
             var Address = await _context.addresses.FindAsync(id);
-            if (Address != null)
-            {
-                _context.addresses.Remove(Address);
-                await _context.SaveChangesAsync();
-            }
+            if (Address is null)
+                return false;
+            _context.addresses.Remove(Address);
+            await _context.SaveChangesAsync();
+            return true;
         }
 
-        public async Task<int> AddNewAddress(Address address)
+        public async Task<Address?> AddAddressAsync(Address address)
         {
-            var data = _context.addresses.Add(address);
+            await _context.addresses.AddAsync(address);
             await _context.SaveChangesAsync();
-            return data.Entity.ID;
+            return address;
         }
     }
 }

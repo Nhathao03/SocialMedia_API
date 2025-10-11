@@ -29,9 +29,8 @@ namespace SocialMedia.Core.Entities.Entity
         public string NormalizeEmail { get; set; }
         public Address? address { get; set; }
         public string? RefreshToken { get; set; }
+        public DateTime? RefreshTokenExpiryTime { get; set; }
         public ICollection<Post>? posts { get; set; }
-
-
         public ICollection<Comment>? Comments { get; set; }
         public ICollection<Like>? Likes { get; set; }
         public ICollection<Notification>? Notifications { get; set; }
