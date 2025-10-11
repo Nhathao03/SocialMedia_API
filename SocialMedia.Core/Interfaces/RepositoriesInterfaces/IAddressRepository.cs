@@ -4,10 +4,10 @@ namespace SocialMedia.Core.Interfaces.RepositoriesInterfaces
 {
     public interface IAddressRepository
     {
-        Task<IEnumerable<Address>> GetAllAddress();
-        Task<Address> GetAddressById(int id);
-        Task UpdateAddress(Address Address);
-        Task DeleteAddress(int id);
-        Task<int> AddNewAddress (Address address);
+        Task<List<Address>?> GetAllAddressAsync();
+        Task<Address?> GetAddressByIdAsync(int id);
+        Task<Address?> UpdateAddressAsync(Address Address);
+        Task<Address?> AddAddressAsync (Address address);
+        Task<bool> DeleteAddressAsync(int id);
     }
 }

@@ -1,7 +1,10 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using SocialMedia.Core.Entities.DTO;
+using Social_Media.Helpers;
+using SocialMedia.Core.DTO.Account;
 using SocialMedia.Core.Services;
+using Swashbuckle.AspNetCore.Annotations;
+using System.Security.Claims;
 namespace Social_Media.Controllers
 {
     [Route("api/address")]
@@ -13,62 +16,66 @@ namespace Social_Media.Controllers
         {
             _addressService = addressService;
         }
-
-        // Add new address (Admin only)
-        [Authorize(Roles = "Admin")]
-        [HttpPost("addAddress")]
-        public async Task<IActionResult> addAddress([FromBody] AddressDTO addressDTO)
+        /// <summary>
+        /// Add a new address.
+        /// </summary>
+        /// <param name="addressDto">The address information to add.</param>
+        /// <returns>Newly created address.</returns>
+        //[Authorize(Roles = "Admin")]
+        [HttpPost("AddAddress")]
+        public async Task<IActionResult> AddAddress([FromBody] AddressDTO addressDto)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
-            var newId = await _addressService.AddAddressAsync(addressDTO);
-            return Ok(new { Message = "Add new address success", AddressId = newId });
+            var result = await _addressService.AddAddressAsync(addressDto);
+            return ApiResponseHelper.Success(result, "Address added successfully.");
         }
 
-        //Get all addresses
-        [HttpGet("getAllAddress")]
-        [ResponseCache(Duration = 60, Location = ResponseCacheLocation.Any, NoStore = false)]
-        public async Task<IActionResult> getAllAddress()
+        /// <summary>
+        /// Get all addresses
+        /// </summary>
+        /// <returns>List of addresses.</returns>
+        [HttpGet("GetAllAddresses")]
+        [SwaggerOperation(Summary = "Retrieve all user addresses", Description = "Retrieves a list of all addresses.")]
+        public async Task<IActionResult> GetAllAddressed()
         {
             var address = await _addressService.GetAllAddressAsync();
-            if (address == null) return NotFound();
-            return Ok(address);
+            return ApiResponseHelper.Success(address, "Addresses retrieved successfully.");
         }
 
-        //Get address by ID
-        [HttpGet("getAddressByID/{id}")]
-        public async Task<IActionResult> getAddressByID(int id)
-        {
-            var address = await _addressService.GetAddressByIdAsync(id);
-            if (address == null) return NotFound();
-            return Ok(address);
-
-        }
-
-        //Update address by ID (Admin only)
-        [Authorize(Roles = "Admin")]
-        [HttpPut("updateAddress")]
-        public async Task<IActionResult> updateAddress([FromBody] AddressDTO address)
+        /// <summary>
+        /// Update an existing address.
+        /// </summary>
+        /// <param name="addressId">The ID of the address to update.</param>
+        /// <param name="addressDto">Updated address information.</param>
+        /// <returns>Updated address details.</returns>
+        [HttpPut("UpdateAddress")]
+        [SwaggerOperation(Summary = "Update address", Description = "Updates the details of an existing address belonging to the authenticated user.")]
+        public async Task<IActionResult> UpdateAddress(int addressId, [FromBody] AddressDTO addressDto)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
-            await _addressService.UpdateAddressAsync(address);
-            return Ok("Update address success");
+            var result = await _addressService.UpdateAddressAsync(addressId, addressDto);
+            return ApiResponseHelper.Success(result, "Address updated successfully.");
         }
 
-        //Delete address by ID (Admin only)
-        [Authorize(Roles = "Admin")]
-        [HttpDelete("deleteAddressByID/{id}")]
-        public async Task<IActionResult> deleteAddressByID(int id)
+        /// <summary>
+        /// Delete an address.
+        /// </summary>
+        /// <param name="addressId">The ID of the address to delete.</param>
+        /// <returns>Status of the deletion operation.</returns>
+        [HttpDelete("{addressId}")]
+        [SwaggerOperation(Summary = "Delete address", Description = "Deletes an existing address if it belongs to the authenticated user.")]
+        public async Task<IActionResult> DeleteAddress(int addressId)
         {
-            var address = await _addressService.GetAddressByIdAsync(id);
+            var address = await _addressService.GetAddressByIdAsync(addressId);
             if (address == null) return NotFound();
-            await _addressService.DeleteAddressAsync(id);
-            return NoContent();
+            await _addressService.DeleteAddressAsync(addressId);
+            return ApiResponseHelper.Success("Address deleted successfully.");
         }
     }
 }

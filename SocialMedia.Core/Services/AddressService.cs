@@ -1,65 +1,81 @@
-﻿using SocialMedia.Core.Entities.DTO;
+﻿using AutoMapper;
+using Microsoft.Extensions.Logging;
+using SocialMedia.Core.DTO.Account;
+using SocialMedia.Core.Entities.Entity;
 using SocialMedia.Core.Entities.UserEntity;
 using SocialMedia.Core.Interfaces.RepositoriesInterfaces;
+using SocialMedia.Core.Interfaces.ServiceInterfaces;
 
 namespace SocialMedia.Core.Services
 {
     public class AddressService : IAddressService
     {
-        private readonly IAddressRepository _repository;
+        private readonly IUnitOfWork _unitOfWork;
+        private readonly IMapper _mapper;
+        private readonly ILogger<AddressService> _logger;
 
-        public AddressService(IAddressRepository repository)
+        public AddressService(IUnitOfWork unitOfWork,
+            IMapper mapper,
+            ILogger<AddressService> logger)
         {
-            _repository = repository;
+            _unitOfWork = unitOfWork;
+            _mapper = mapper;
+            _logger = logger;
         }
 
-        public async Task<IEnumerable<Address>> GetAllAddressAsync()
+        public async Task<List<Address>?> GetAllAddressAsync()
         {
-            return await _repository.GetAllAddress();
+            return await _unitOfWork.AddressRepository.GetAllAddressAsync();
         }
 
         public async Task<Address> GetAddressByIdAsync(int id)
         {
-            return await _repository.GetAddressById(id);
+            _logger.LogInformation("Retrieving address by ID {AddressId}", id);
+            return await _unitOfWork.AddressRepository.GetAddressByIdAsync(id);
         }
 
-        public async Task UpdateAddressAsync(AddressDTO modelDTO)
+        public async Task<RetriveAddressDTO?> AddAddressAsync(AddressDTO dto)
         {
-            var existingAddress = await _repository.GetAddressById(modelDTO.Id);
-            if (existingAddress == null)
+            _logger.LogInformation("Adding new address with name {AddressName}", dto?.name);
+            if (dto == null)
+                throw new ArgumentNullException(nameof(AddressDTO), "Address data is required.");
+            if (string.IsNullOrWhiteSpace(dto.name))
+                throw new ArgumentException("Address name cannot be empty.", nameof(dto.name));
+
+            var address = _mapper.Map<Address>(dto);
+            var result = await _unitOfWork.AddressRepository.AddAddressAsync(address);
+            _logger.LogInformation("Address added with ID {AddressId}", result?.ID);
+            return _mapper.Map<RetriveAddressDTO>(result);
+        }
+
+        public async Task<RetriveAddressDTO?> UpdateAddressAsync(int addressId, AddressDTO addressDto)
+        {
+            _logger.LogInformation("Updating address with ID {AddressId}", addressId);
+            var existingAddress = await _unitOfWork.AddressRepository.GetAddressByIdAsync(addressId);
+            if (existingAddress is null)
             {
-                throw new KeyNotFoundException($"Address with Id {modelDTO.Id} not exits.");
+                throw new KeyNotFoundException($"Address with Id {addressId} not exits.");
             }
-            existingAddress.name = modelDTO.name;
-            existingAddress.slug = modelDTO.slug;
-            existingAddress.type = modelDTO.type;
-            existingAddress.name_with_type = modelDTO.name_with_type;
 
-            await _repository.UpdateAddress(existingAddress);
+            var address = _mapper.Map(addressDto, existingAddress);
+            var result = await _unitOfWork.AddressRepository.UpdateAddressAsync(address);
+            _logger.LogInformation("Address with ID {AddressId} updated successfully", addressId);
+            return _mapper.Map<RetriveAddressDTO>(result);
         }
 
-
-        public async Task DeleteAddressAsync(int id)
+        public async Task<bool> DeleteAddressAsync(int id)
         {
-            await _repository.DeleteAddress(id);
-        }
-        public async Task<int> AddAddressAsync(AddressDTO addressDTO)
-        {
-            if(addressDTO == null)
-                throw new ArgumentNullException(nameof(addressDTO), "Address data is required.");
-            if(string.IsNullOrWhiteSpace(addressDTO.name))
-                throw new ArgumentException("Address name cannot be empty.", nameof(addressDTO.name));
-
-            var address = new Address
+            _logger.LogInformation("Deleting address with ID {AddressId}", id);
+            var exitsAddress = await _unitOfWork.AddressRepository.GetAddressByIdAsync(id);
+            if(exitsAddress is null)
             {
-                slug = addressDTO.slug,
-                name = addressDTO.name,
-                type = addressDTO.type,
-                name_with_type = addressDTO.name_with_type
-            };
-
-            var newId = await _repository.AddNewAddress(address);
-            return newId;
+                throw new KeyNotFoundException($"Address with Id {id} not exits.");
+            }
+            
+            var result = await _unitOfWork.AddressRepository.DeleteAddressAsync(id);
+            _logger.LogInformation("Address with ID {AddressId} deleted successfully", id);
+            return result;
         }
+        
     }
 }

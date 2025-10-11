@@ -1,8 +1,7 @@
-﻿namespace SocialMedia.Core.Entities.DTO.AccountUser
+﻿namespace SocialMedia.Core.Entities.DTO.Account
 {
-    public class PersonalInformationDTO
+    public class UpdateProfileDTO
     {
-        public string userID { get; set; }
         public string fullname { get; set; }
         public int? addressID { get; set; }
         public DateTime? Birth {  get; set; }
