@@ -4,12 +4,12 @@ namespace SocialMedia.Infrastructure.Repositories
 {
     public interface IMessageRepository
     {
-        Task<IEnumerable<Message>> GetAllMessages();
-        Task<Message> GetMessageById(int id);
-        Task AddMessage(Message Message);
-        Task UpdateMessage(Message Message);
-        Task DeleteMessage(int id);
-        Task<List<Message>> GetMessageByReceiverIdAndSenderId(string userId1, string userId2);
-        Task<List<Message>> GetMessageLastest(string userId1, string userId2);
+        Task<List<Message>?> GetAllMessagesAsync();
+        Task<Message?> GetMessageByIdAsync(int id);
+        Task<Message?> AddMessageAsync(Message Message);
+        Task<Message?> UpdateMessageAsync(Message Message);
+        Task<bool> DeleteMessageAsync(int id);
+        Task<List<Message>?> GetMessageByReceiverIdAndSenderIdAsync(string userId1, string userId2);
+        Task<List<Message>?> GetMessageLastestAsync(string userId1, string userId2);
     }
 }

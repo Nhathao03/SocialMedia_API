@@ -1,4 +1,4 @@
-﻿namespace SocialMedia.Core.Entities.DTO
+﻿namespace SocialMedia.Core.DTO.Post
 {
     public class PostImageDTO
     {

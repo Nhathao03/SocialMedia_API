@@ -1,13 +1,14 @@
-﻿using SocialMedia.Core.Entities.PostEntity;
+﻿using SocialMedia.Core.DTO.Post;
+using SocialMedia.Core.Entities.PostEntity;
 
 namespace SocialMedia.Core.Services
 {
     public interface IPostCategoryService
     {
-        Task<IEnumerable<PostCategory>> GetAllPostCategory();
-        Task<PostCategory> GetPostCategoryById(int id);
-        Task AddPostCategory(PostCategory post);
-        Task UpdatePostCategory(PostCategory post);
-        Task DeletePostCategory(int id);
+        Task<List<PostCategory>?> GetAllPostCategoryAsync();
+        Task<PostCategory?> GetPostCategoryByIdAsync(int id);
+        Task<RetriveCategoryDTO?> AddPostCategoryAsync(PostCategoryDTO post);
+        Task<RetriveCategoryDTO?> UpdatePostCategoryAsync(int id, PostCategoryDTO post);
+        Task<bool> DeletePostCategoryAsync(int id);
     }
 }

@@ -5,12 +5,14 @@ namespace SocialMedia.Infrastructure.Repositories
 {
     public interface IFriendRequestRepository
     {
-        Task<IEnumerable<FriendRequest>> GetAllFriendRequests();
-        Task<FriendRequest> GetFriendRequestById(int id);
-        Task AddFriendRequest(FriendRequest FriendRequest);
-        Task UpdateFriendRequest(FriendRequest FriendRequest);
-        Task DeleteFriendRequest(int id);
-        Task<IEnumerable<FriendRequest>> GetFriendRequestByReceiverID(string id);
-        Task<IEnumerable<FriendRequest>> GetFriendRequestByUserID(string id);
+        Task<List<FriendRequest>?> GetAllFriendRequestAsync();
+        Task<FriendRequest?> GetFriendRequestByIdAsync(int id);
+        Task<FriendRequest?> AddFriendRequestAsync(FriendRequest FriendRequest);
+        Task<FriendRequest?> UpdateFriendRequestAsync(FriendRequest FriendRequest);
+        Task<bool> DeleteFriendRequestAsync(int id);
+        Task<List<FriendRequest>?> GetFriendRequestByUserIdAsync(string id);
+        Task<List<FriendRequest>?> GetReceivedRequestAsync(string userId);
+        Task<List<FriendRequest>?> GetSentRequestAsync(string userId);
+        Task<FriendRequest?> GetFriendRequestBetweenUsersAsync(string userA, string userB);
     }
 }

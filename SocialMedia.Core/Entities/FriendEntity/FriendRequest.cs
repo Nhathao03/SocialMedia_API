@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.VisualBasic;
+using System.ComponentModel.DataAnnotations;
 
 namespace SocialMedia.Core.Entities.FriendEntity
 {
@@ -8,7 +9,7 @@ namespace SocialMedia.Core.Entities.FriendEntity
         public int ID { get; set; }
         public string SenderID { get; set; }
         public string ReceiverID { get; set; }
-        public int status { get; set; }
+        public int status { get; set; } 
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     }
 }

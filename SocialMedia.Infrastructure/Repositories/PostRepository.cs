@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using SocialMedia.Core.DTO.Post;
 using SocialMedia.Core.Entities.DTO;
 using SocialMedia.Core.Entities.DTO.Comment;
 using SocialMedia.Core.Entities.PostEntity;
@@ -42,13 +43,11 @@ namespace SocialMedia.Infrastructure.Repositories
                     UserAvatar = p.user != null ? p.user.Avatar : null,
                     Comments = p.Comments.Select(c => new CommentDTO
                     {
-                        userID = c.UserId,
-                        postID = c.PostId,
-                        UserAvatar_comment = c.user != null ? c.user.Avatar : null,
-                        UserName_comment = c.user != null ? c.user.Fullname : null,
+                        UserId = c.UserId,
+                        PostId = c.PostId,
                         Content = c.Content,
                         CreatedAt = c.CreatedAt,
-                        ImageUrl = c.Image,
+                        Image = c.Image,
                     }).ToList(),
                     Likes = p.Likes.Select(l => new LikeDTO
                     {
@@ -59,7 +58,6 @@ namespace SocialMedia.Infrastructure.Repositories
                     }).ToList(),
                     postCategory = p.PostCategory != null ? new PostCategoryDTO
                     {
-                        ID = p.PostCategory.ID,
                         Name = p.PostCategory.Name
                     } : null,
                     PostImages = p.PostImages.Select(i => new PostImageDTO
@@ -122,13 +120,11 @@ namespace SocialMedia.Infrastructure.Repositories
                     UserAvatar = p.user != null ? p.user.Avatar : null,
                     Comments = p.Comments.Select(c => new CommentDTO
                     {
-                        userID = c.UserId,
-                        postID = c.PostId,
-                        UserAvatar_comment = c.user != null ? c.user.Avatar : null,
-                        UserName_comment = c.user != null ? c.user.Fullname : null,
+                        UserId = c.UserId,
+                        PostId = c.PostId,
                         Content = c.Content,
                         CreatedAt = c.CreatedAt,
-                        ImageUrl = c.Image,
+                        Image = c.Image,
                     }).ToList(),
                     Likes = p.Likes.Select(l => new LikeDTO
                     {
@@ -139,7 +135,6 @@ namespace SocialMedia.Infrastructure.Repositories
                     }).ToList(),
                     postCategory = p.PostCategory != null ? new PostCategoryDTO
                     {
-                        ID = p.PostCategory.ID,
                         Name = p.PostCategory.Name
                     } : null,
                     PostImages = p.PostImages.Select(i => new PostImageDTO

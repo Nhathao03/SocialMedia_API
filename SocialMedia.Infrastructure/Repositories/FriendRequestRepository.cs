@@ -15,45 +15,60 @@ namespace SocialMedia.Infrastructure.Repositories
             _context = context;
         }
 
-        public async Task<IEnumerable<FriendRequest>> GetAllFriendRequests()
+        public async Task<List<FriendRequest>?> GetAllFriendRequestAsync()
         {
             return await _context.friendRequests.ToListAsync();
         }
-
-        public async Task<FriendRequest> GetFriendRequestById(int id)
+        public async Task<FriendRequest?> GetFriendRequestByIdAsync(int id)
         {
             return await _context.friendRequests.FirstOrDefaultAsync(p => p.ID == id);
         }
 
-        public async Task<IEnumerable<FriendRequest>> GetFriendRequestByUserID(string id)
+        public async Task<FriendRequest?> GetFriendRequestBetweenUsersAsync(string userA, string userB)
+        {
+            return await _context.friendRequests
+                .FirstOrDefaultAsync(fr =>
+                    (fr.SenderID == userA && fr.ReceiverID == userB) ||
+                    (fr.SenderID == userB && fr.ReceiverID == userA));
+        }
+
+        public async Task<List<FriendRequest>?> GetFriendRequestByUserIdAsync(string id)
         {
             return await _context.friendRequests.Where(f => f.SenderID == id || f.ReceiverID == id).ToListAsync();
         }
-        public async Task<IEnumerable<FriendRequest>> GetFriendRequestByReceiverID(string userId)
-        {
-            return await _context.friendRequests.Where(f => f.ReceiverID == userId && f.status == 1).ToListAsync();
-        }
 
-        public async Task AddFriendRequest(FriendRequest friendRequest)
+        public async Task<FriendRequest?> AddFriendRequestAsync(FriendRequest model)
         {
-            _context.friendRequests.Add(friendRequest);
+            _context.friendRequests.Add(model);
             await _context.SaveChangesAsync();
+            return model;
         }
 
-        public async Task UpdateFriendRequest(FriendRequest FriendRequest)
+        public async Task<FriendRequest?> UpdateFriendRequestAsync(FriendRequest model)
         {
-            _context.friendRequests.Update(FriendRequest);
+            _context.friendRequests.Update(model);
             await _context.SaveChangesAsync();
+            return model;
         }
 
-        public async Task DeleteFriendRequest(int id)
+        public async Task<bool> DeleteFriendRequestAsync(int id)
         {
-            var FriendRequest = await _context.friendRequests.FindAsync(id);
-            if (FriendRequest != null)
-            {
-                _context.friendRequests.Remove(FriendRequest);
-                await _context.SaveChangesAsync();
-            }
+            var existingfriendRequest = await _context.friendRequests.FindAsync(id);
+            if(existingfriendRequest is null)
+                return false;
+            _context.friendRequests.Remove(existingfriendRequest);
+            await _context.SaveChangesAsync();
+            return true;
+        }
+
+        public async Task<List<FriendRequest>?> GetSentRequestAsync(string userId)
+        {
+            return await _context.friendRequests.Where(fr => fr.SenderID == userId && fr.status == 1).ToListAsync();
+        }
+
+        public async Task<List<FriendRequest>?> GetReceivedRequestAsync(string userId)
+        {
+            return await _context.friendRequests.Where(fr => fr.ReceiverID == userId && fr.status == 1).ToListAsync();
         }
     }
 }

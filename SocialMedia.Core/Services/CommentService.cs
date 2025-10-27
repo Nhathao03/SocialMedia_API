@@ -1,70 +1,76 @@
 ﻿using SocialMedia.Infrastructure.Repositories;
 using SocialMedia.Core.Entities.DTO.Comment;
 using SocialMedia.Core.Entities.CommentEntity;
+using Microsoft.Extensions.Logging;
+using SocialMedia.Core.Interfaces.ServiceInterfaces;
+using SocialMedia.Core.DTO.Comment;
+using AutoMapper;
 
 namespace SocialMedia.Core.Services
 {
-    public class CommentService : ICommentService
+    public class CommentService :  ICommentService
     {
-        private readonly ICommentRepository _commentRepository;
+        private readonly ILogger<CommentService> _logger;
+        private readonly IUnitOfWork _unitOfWork;
+        private readonly IMapper _mapper;
 
-        public CommentService(ICommentRepository repository)
+        public CommentService(IUnitOfWork unitOfWork,
+            ILogger<CommentService> logger,
+            IMapper mapper)
         {
-            _commentRepository = repository;
+            _unitOfWork = unitOfWork;
+            _logger = logger;
+            _mapper = mapper;
         }
 
-        public async Task<IEnumerable<Comment>> GetAllCommentsAsync()
+        public async Task<Comment?> GetCommentByIdAsync(int id)
         {
-            return await _commentRepository.GetAllComments();
+            return await _unitOfWork.CommentRepository.GetCommentByIdAsync(id);
+        }
+        public async Task<List<Comment>?> GetCommentByPostIdAsync(int id)
+        {
+            return await _unitOfWork.CommentRepository.GetCommentByPostIdAsync(id);
         }
 
-        public async Task<Comment> GetCommentByIdAsync(int id)
+        public async Task<RetriveCommentDTO?> AddCommentAsync(CommentDTO dto)
         {
-            return await _commentRepository.GetCommentById(id);
-        }
-        public async Task<IEnumerable<Comment>> GetCommentByPostIDAsync(int postID)
-        {
-            return await _commentRepository.GetCommentByPostID(postID);
+            _logger.LogInformation("Adding a new comment");
+            if (dto is null)
+                throw new ArgumentNullException(nameof(CommentDTO), "Comment data is required.");
+            if (string.IsNullOrWhiteSpace(dto.Content))
+                throw new ArgumentException("Comment content cannot be empty.", nameof(dto.Content));
+
+            var comment = _mapper.Map<Comment>(dto);
+            var result = await _unitOfWork.CommentRepository.AddCommentAsync(comment);
+            _logger.LogInformation("Comment added with ID {CommentId}", result?.ID);
+            return _mapper.Map<RetriveCommentDTO>(result);
         }
 
-        public async Task<int> AddCommentAsync(CommentDTO commentDTO)
+        public async Task<RetriveCommentDTO?> UpdateCommentAsync(int id, CommentDTO dto)
         {
-            if (commentDTO == null)
-                throw new ArgumentNullException(nameof(commentDTO));
-            if (string.IsNullOrWhiteSpace(commentDTO.Content))
-                throw new ArgumentException("Comment content cannot be empty.", nameof(commentDTO.Content));
-
-            var comment = new Comment
+            _logger.LogInformation("Updating comment with ID {CommentId}", id);
+            var existingComment = await _unitOfWork.CommentRepository.GetCommentByIdAsync(id);
+            if (existingComment is null)
             {
-                UserId = commentDTO.userID,
-                PostId = commentDTO.postID,         
-                Content = commentDTO.Content,
-                CreatedAt = DateTime.UtcNow,
-                UpdatedAt = DateTime.UtcNow,
-                Image = commentDTO.ImageUrl,
-            };
-
-            var newId = await _commentRepository.AddComment(comment);
-            return newId;
+                throw new KeyNotFoundException($"Comment with Id {id} not exits.");
+            }
+            var comment = _mapper.Map(dto, existingComment);
+            var result =  await _unitOfWork.CommentRepository.UpdateCommentAsync(comment);
+            _logger.LogInformation("Comment updated with ID {CommentId}", result?.ID);
+            return _mapper.Map<RetriveCommentDTO>(result);
         }
 
-        public async Task UpdateCommentAsync(CommentDTO commentDTO)
+        public async Task<bool> DeleteCommentAsync(int id)
         {
-            var comment = await _commentRepository.GetCommentById(commentDTO.Id);
-            comment.Content = commentDTO.Content;
-            comment.UpdatedAt = DateTime.UtcNow;
-            comment.Image = commentDTO.ImageUrl;
-            await _commentRepository.UpdateComment(comment);
-        }
-
-        public async Task DeleteCommentAsync(int id)
-        {
-            await _commentRepository.DeleteComment(id);
-        }
-
-        public async Task LikeCommentAsync(int commentId, string userId)
-        {
-            
+             _logger.LogInformation("Deleting comment with ID {CommentId}", id);
+            var existingComment = await _unitOfWork.CommentRepository.GetCommentByIdAsync(id);
+            if (existingComment is null)
+            {
+                throw new KeyNotFoundException($"Comment with Id {id} not exits.");
+            }
+            var result = await _unitOfWork.CommentRepository.DeleteCommentAsync(id);
+            _logger.LogInformation("Comment with ID {CommentId} deleted successfully", id);
+            return result;
         }
     }
 }

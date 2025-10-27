@@ -1,6 +1,6 @@
 ﻿using SocialMedia.Infrastructure.Repositories;
-using SocialMedia.Core.Entities.DTO;
 using SocialMedia.Core.Entities.FriendEntity;
+using SocialMedia.Core.DTO.Friend;
 
 namespace SocialMedia.Core.Services
 {

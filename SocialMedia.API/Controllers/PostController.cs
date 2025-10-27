@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using SocialMedia.Core.Services;
-using SocialMedia.Core.Entities.DTO;
 using SocialMedia.Core.Entities.PostEntity;
+using SocialMedia.Core.DTO.Post;
 
 
 namespace Social_Media.Controllers

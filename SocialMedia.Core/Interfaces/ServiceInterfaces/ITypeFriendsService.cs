@@ -1,4 +1,4 @@
-﻿using SocialMedia.Core.Entities.DTO;
+﻿using SocialMedia.Core.DTO.Friend;
 using SocialMedia.Core.Entities.FriendEntity;
 
 namespace SocialMedia.Core.Services
