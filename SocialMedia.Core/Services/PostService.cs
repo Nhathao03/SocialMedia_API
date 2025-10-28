@@ -1,7 +1,7 @@
 ﻿using SocialMedia.Infrastructure.Repositories;
-using SocialMedia.Core.Entities.DTO;
 using Microsoft.Extensions.Logging;
 using SocialMedia.Core.Entities.PostEntity;
+using SocialMedia.Core.DTO.Post;
 
 namespace SocialMedia.Core.Services
 {

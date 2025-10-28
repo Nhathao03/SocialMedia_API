@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using SocialMedia.Core.Services;
 using SocialMedia.Core.Entities;
-using SocialMedia.Core.Entities.DTO;
+using SocialMedia.Core.DTO.Friend;
 
 namespace Social_Media.Controllers
 {

@@ -15,43 +15,35 @@ namespace SocialMedia.Infrastructure.Repositories
             _context = context;
         }
 
-        public async Task<IEnumerable<Friends>> GetAllFriends()
-        {
-            return await _context.friends.ToListAsync();
-        }
-
-        public async Task<Friends> GetFriendById(int id)
+        public async Task<Friends?> GetFriendByIdAsync(int id)
         {
             return await _context.friends.FirstOrDefaultAsync(p => p.ID == id);
         }
-
-        public async Task AddFriend(Friends friends)
+        public async Task<Friends?> AddFriendAsync(Friends friends)
         {
             _context.friends.Add(friends);
             await _context.SaveChangesAsync();
+            return friends;
         }
 
-        public async Task UpdateFriend(Friends friends)
+        public async Task<Friends?> UpdateFriendAsync(Friends friends)
         {
             _context.friends.Update(friends);
             await _context.SaveChangesAsync();
+            return friends;
         }
 
-        public async Task DeleteFriend(int id)
+        public async Task<bool> DeleteFriendAsync(int id)
         {
-            var Friend = await _context.friends.FindAsync(id);
-            if (Friend != null)
-            {
-                _context.friends.Remove(Friend);
-                await _context.SaveChangesAsync();
-            }
-        }
-        public async Task<IEnumerable<Friends>> GetFriendsByUserID( string userID)
-        {
-            return await _context.friends.Where(f => f.UserID == userID).ToListAsync();
+            var friend = await _context.friends.FindAsync(id);
+            if (friend is null)
+                return false;
+            _context.friends.Remove(friend);
+            await _context.SaveChangesAsync();
+            return true;
         }
 
-        public async Task<IEnumerable<Friends>> getFriendRecentlyAdded(string userID)
+        public async Task<List<Friends>?> GetFriendRecentlyAddedAsync(string userID)
         {
             var threeDaysAgo = DateTime.UtcNow.AddDays(-3);
             return await _context.friends
@@ -60,16 +52,29 @@ namespace SocialMedia.Infrastructure.Repositories
                 .ToListAsync();
         }
 
-        public async Task<IEnumerable<string>> GetFriendOfEachUser(string userID)
+        public async Task<List<Friends>?> GetFriendOfEachUserAsync(string userID)
         {
-            return await _context.friends
+            var userFriends = await _context.friends
                 .Where(f => f.UserID == userID || f.FriendID == userID)
+                .ToListAsync();
+            var friendIds = userFriends
                 .Select(f => f.UserID == userID ? f.FriendID : f.UserID)
                 .Distinct()
-                .ToListAsync();
+                .ToList();
+            var result = new List<Friends>();
+            foreach (var friendId in friendIds)
+            {
+                var friendRecord = userFriends
+                    .FirstOrDefault(f => (f.UserID == userID && f.FriendID == friendId) || (f.UserID == friendId && f.FriendID == userID));
+                if (friendRecord != null)
+                {
+                    result.Add(friendRecord);
+                }
+            }
+            return result;
         }
 
-        public async Task<IEnumerable<Friends>> GetFriendBaseOnHomeTown(string userId)
+        public async Task<List<Friends>?> GetFriendBaseOnHomeTownAsync(string userId)
         {
             var currentUser = await _context.users.FirstOrDefaultAsync(u => u.Id == userId);
             if (currentUser == null) return null;
@@ -91,7 +96,7 @@ namespace SocialMedia.Infrastructure.Repositories
 
                 if (friend != null)
                 {
-                    result.Add(friend);  
+                    result.Add(friend);
                 }
             }
 

@@ -13,44 +13,37 @@ namespace SocialMedia.Infrastructure.Repositories
         {
             _context = context;
         }
-
-        public async Task<IEnumerable<Comment>> GetAllComments()
-        {
-            return await _context.comments.ToListAsync();
-        }
-
-        public async Task<Comment> GetCommentById(int id)
+        public async Task<Comment?> GetCommentByIdAsync(int id)
         {
             return await _context.comments.FirstOrDefaultAsync(p => p.ID == id);
         }
-        public async Task<IEnumerable<Comment>> GetCommentByPostID(int postID)
+        public async Task<List<Comment>?> GetCommentByPostIdAsync(int id)
         {
-            return await _context.comments.Where(c => c.PostId == postID).ToListAsync();
+            return await _context.comments.Where(c => c.PostId == id).ToListAsync();
         }
 
-        public async Task<int> AddComment(Comment comment)
+        public async Task<Comment?> AddCommentAsync(Comment comment)
         {
-            var data = _context.comments.Add(comment);
+            _context.comments.Add(comment);
             await _context.SaveChangesAsync();
-            return data.Entity.ID;  
+            return comment;
         }
 
-        public async Task UpdateComment(Comment comment)
+        public async Task<Comment?> UpdateCommentAsync(Comment comment)
         {
             _context.comments.Update(comment);
             await _context.SaveChangesAsync();
+            return comment;
         }
 
-        public async Task DeleteComment(int id)
+        public async Task<bool> DeleteCommentAsync(int id)
         {
             var comment = await _context.comments.FindAsync(id);
-            if (comment != null)
-            {
-                _context.comments.Remove(comment);
-                await _context.SaveChangesAsync();
-            }
+            if(comment is null)
+                return false;
+            _context.comments.Remove(comment);
+            await _context.SaveChangesAsync();
+            return true;
         }
-
-        
     }
 }

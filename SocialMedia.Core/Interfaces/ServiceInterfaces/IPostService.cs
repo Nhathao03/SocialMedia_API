@@ -1,4 +1,4 @@
-﻿using SocialMedia.Core.Entities.DTO;
+﻿using SocialMedia.Core.DTO.Post;
 using SocialMedia.Core.Entities.PostEntity;
 
 namespace SocialMedia.Core.Services

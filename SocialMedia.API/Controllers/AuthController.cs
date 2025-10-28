@@ -19,80 +19,146 @@ namespace Social_Media.Controllers
         private readonly IUserService _userService;
         private readonly IRoleCheckService _roleCheckService;
         private readonly IConfiguration _config;
+        private readonly ILogger<AuthController> _logger;
         private static Dictionary<string, (string Otp, DateTime Expiry)> _otpStore = new();
 
         public AuthController(IUserService userService,
             IRoleCheckService roleCheckService,
-            IConfiguration configuration)
+            IConfiguration configuration,
+            ILogger<AuthController> logger)
         {
             _userService = userService;
             _roleCheckService = roleCheckService;
             _config = configuration;
+            _logger = logger;
         }
 
-        // Register account
+        /// <summary>
+        /// Register a new user account.
+        /// </summary>
+        /// <param name="model">The resgister data transfer object containing content and metadata.</param>
+        /// <returns>Returns the created user object or validation errors</returns>
+        /// <response code="201">Register successfully</response>
+        /// <response code="400">Invalid input data</response>
         [HttpPost("register")]
         [SwaggerOperation(Summary = "Register a new user", Description = "Creates a new user account using email, password.")]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> RegisterAccount([FromBody] RegisterDTO? model)
+        public async Task<IActionResult> RegisterAccountAsync([FromBody] RegisterDTO? model)
         {
-            // check valid model
+            if (model is null)
+            {
+                _logger.LogWarning("Received null RegisterDTO in RegisterAccountAsync.");
+                return ApiResponseHelper.BadRequest("Model cannot be null.");
+            }
+
             if (!ModelState.IsValid)
             {
+                _logger.LogWarning("Invalid model state in RegisterAccountAsync: {ModelState}", ModelState);
                 return BadRequest(ModelState);
             }
-            if (model == null)
-                return ApiResponseHelper.BadRequest("Model can not null.");
-
-            var result = await _userService.RegisterAccountAsync(model);
-            if (!result.Success)
-                return ApiResponseHelper.BadRequest(string.Join("", "", result.Errors));
-            return ApiResponseHelper.Created(result.Errors, "Register account successfully.");
+            try
+            {
+                var result = await _userService.RegisterAccountAsync(model);
+                if (!result.Success)
+                {
+                    _logger.LogWarning("Registration failed in RegisterAccountAsync: {Errors}", string.Join(", ", result.Errors));
+                    return ApiResponseHelper.BadRequest(string.Join(", ", result.Errors));
+                }
+                _logger.LogInformation("User registered successfully with email: {Email}", model.Email);
+                return ApiResponseHelper.Created(result, "Register successfully.");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Exception occurred in RegisterAccountAsync.");
+                return ApiResponseHelper.InternalServerError("An error occurred during registration.");
+            }
         }
 
-        // Login
+        /// <summary>
+        /// Login user account.
+        /// </summary>
+        /// <param name="model">The login data transfer object containing content and metadata.</param>
+        /// <returns>Returns the refreshToken and accessToken or validation errors</returns>
+        /// <response code="201">Login successfully</response>
+        /// <response code="400">Invalid input data</response>
+        /// <response code="401">Unauthorized</response>
         [HttpPost("login")]
         [SwaggerOperation(Summary = "User login", Description = "Logs in user with email and password, returns JWT tokens and refresh token.")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        public async Task<IActionResult> LoginAccount([FromBody] LoginDTO? model)
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> LoginAccountAsync([FromBody] LoginDTO? model)
         {
-            // check valid model
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-            if (model == null)
-                return ApiResponseHelper.BadRequest("Model can not null.");
-
-            var result = await _userService.LoginAsync(model);
-
-            if(!result.Success)
-                return ApiResponseHelper.Unauthorized(string.Join("", "", result.Errors));
-
-            var jwtSettings = _config.GetSection("Jwt");
-            Response.Cookies.Append("token", result.AccessToken, new CookieOptions
+            if (model is null)
             {
-                HttpOnly = true,
-                Secure = true,
-                SameSite = SameSiteMode.Strict,
-                Expires = DateTime.UtcNow.AddMinutes(Convert.ToDouble(jwtSettings["Expires"]))
-            }); ;
+                _logger.LogWarning("Received null LoginDTO in LoginAccountAsync.");
+                return ApiResponseHelper.BadRequest("Model cannot be null.");
+            }
 
-            return ApiResponseHelper.Success(new { result.RefreshToken, result.AccessToken }, "Login successfully." );
+            if (!ModelState.IsValid)
+            {
+                _logger.LogWarning("Invalid model state in LoginAccountAsync: {ModelState}", ModelState);
+                return BadRequest(ModelState);
+            }
+            try
+            {
+                var result = await _userService.LoginAsync(model);
+
+                if (!result.Success)
+                {
+                    _logger.LogWarning("Login failed in LoginAccountAsync: {Errors}", string.Join(", ", result.Errors));
+                    return ApiResponseHelper.Unauthorized(string.Join("", "", result.Errors));
+                }
+
+                var jwtSettings = _config.GetSection("Jwt");
+                Response.Cookies.Append("token", result.AccessToken, new CookieOptions
+                {
+                    HttpOnly = true,
+                    Secure = true,
+                    SameSite = SameSiteMode.Strict,
+                    Expires = DateTime.UtcNow.AddMinutes(Convert.ToDouble(jwtSettings["Expires"]))
+                }); ;
+
+                _logger.LogInformation("User logged in successfully with email: {Email}", model.Email);
+                return ApiResponseHelper.Success(new { result.RefreshToken, result.AccessToken }, "Login successfully.");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Exception occurred in LoginAccountAsync.");
+                return ApiResponseHelper.InternalServerError("An error occurred during login.");
+
+            }
         }
 
-        //Decode JWT Token
-        [HttpPost("decode")]
+        /// <summary>
+        /// Decode JWT token.
+        /// </summary>
+        /// <param name="jwtToken">The unique token of the user</param>
+        /// <returns>Information of token after decode</returns>
+        /// <response code="200">Decode token successfully</response>
+        /// <response code="400">Invalid input data</response>
+        [HttpPost("Decode")]
+        [SwaggerOperation(Summary = "Decode JWT token", Description = "Decodes a JWT token and returns its header and payload.")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public IActionResult Decode([FromBody] string jwtToken)
         {
 
             if (string.IsNullOrWhiteSpace(jwtToken))
-                return BadRequest("Token is required.");
-
+            {
+                _logger.LogWarning("JWT token is null or empty in Decode.");
+                return ApiResponseHelper.BadRequest("JWT token is required.");
+            }
+                
             var handler = new JwtSecurityTokenHandler();
 
             if (!handler.CanReadToken(jwtToken))
-                return BadRequest("Invalid JWT format.");
+            {
+                _logger.LogWarning("Invalid JWT token format in Decode.");
+                return ApiResponseHelper.BadRequest("Invalid JWT token format.");
+            }
+               
             try
             {
                 var token = handler.ReadJwtToken(jwtToken);
@@ -116,26 +182,37 @@ namespace Social_Media.Controllers
                     Payload = payload
                 };
 
-                return Ok(result);
+                _logger.LogInformation("JWT token decoded successfully in Decode.");
+                return ApiResponseHelper.Success(result, "Decode token successfully.");
             }
             catch (Exception ex)
             {
-                return BadRequest(new { error = ex.Message });
+                _logger.LogError(ex, "Exception occurred while decoding JWT token in Decode.");
+                return ApiResponseHelper.InternalServerError("An error occurred while decoding the JWT token.");
             }
         }
 
-        // Logout
+
+        /// <summary>
+        /// Lougout user account.
+        /// </summary>
         [HttpGet("logout")]
         [Authorize]
         [SwaggerOperation(Summary = "Logout", Description = "Removes JWT token from cookies and logs out the user.")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
         public IActionResult Logout()
         {
             Response.Cookies.Delete("token");
+            _logger.LogInformation("User logged out successfully in Logout.");
             return ApiResponseHelper.Success("", "Logged out");
         }
 
-        // Refresh token
+        /// <summary>
+        /// Refresh JWT tokens.
+        /// </summary>
+        /// <param name="refreshToken">The unique refreshToken of the user</param>
+        /// <returns>Returns the accessToken and refreshToken</returns>
+        /// <response code="201">Access token added to cookies successfuly</response>
+        /// <response code="400">Invalid input data</response>
         [HttpPost("refresh-token")]
         [SwaggerOperation(Summary = "Refresh JWT tokens", Description = "Refreshes JWT access and refresh tokens using a valid refresh token.")]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -144,7 +221,11 @@ namespace Social_Media.Controllers
         {
             var user = _userService.GetUserByRefreshToken(refreshToken);
             if (user == null)
+            {
+                _logger.LogWarning("Invalid refresh token provided in RefreshToken.");
                 return ApiResponseHelper.Unauthorized("Invalid refresh token.");
+            }
+            
             var newAccessToken = await _userService.GenerateAccessTokenAsync(user.Id);
             var newRefreshToken = await _userService.GenerateRefreshTokenAsync(user);
 
@@ -156,6 +237,7 @@ namespace Social_Media.Controllers
                 Expires = DateTime.UtcNow.AddMinutes(Convert.ToDouble(_config["Jwt:Expires"]))
             });
 
+            _logger.LogInformation("JWT tokens refreshed successfully in RefreshToken.");
             return ApiResponseHelper.Success(new
             {
                 AccessToken = newAccessToken,

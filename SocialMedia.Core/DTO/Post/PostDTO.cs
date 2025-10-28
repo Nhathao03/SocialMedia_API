@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using SocialMedia.Core.Entities.DTO.Comment;
 
-namespace SocialMedia.Core.Entities.DTO
+namespace SocialMedia.Core.DTO.Post
 {
     public class PostDTO
     {
@@ -25,7 +25,6 @@ namespace SocialMedia.Core.Entities.DTO
 
     public class PostCategoryDTO
     {
-        public int ID { get; set; }
         public string Name { get; set; }
     }
 }

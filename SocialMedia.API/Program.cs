@@ -78,7 +78,12 @@ namespace SocialMedia.API
             builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
             // register the AutoMapper services
-            builder.Services.AddAutoMapper(typeof(AccountMapping));
+            builder.Services.AddAutoMapper(typeof(PostMapping).Assembly,
+                                            typeof(MessageMapping).Assembly,
+                                            typeof(AccountMapping).Assembly,
+                                            typeof(RoleMapping).Assembly,
+                                            typeof(FriendMapping).Assembly
+                                            );
 
             // Add Identity services
             builder.Services.AddScoped<EmailService>();

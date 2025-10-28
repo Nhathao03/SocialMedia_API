@@ -2,13 +2,11 @@
 {
     public class CommentDTO
     {
-        public int Id { get; set; }
-        public string userID { get; set; }
-        public int postID { get; set; }
-        public string Content { get; set; }
-        public string? ImageUrl { get; set; }
-        public string? UserName_comment { get; set; }
-        public string? UserAvatar_comment { get; set; }
-        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        public string? Image { get; set; }
+        public int PostId { get; set; }
+        public string UserId { get; set; }
+        public string? Content { get; set; }
+        public DateTime CreatedAt { get; set; } 
+        public DateTime UpdatedAt {  get; set; } = DateTime.Now;
     }
 }

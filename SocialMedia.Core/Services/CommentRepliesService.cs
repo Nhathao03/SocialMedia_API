@@ -2,7 +2,7 @@
 using SocialMedia.Core.Entities.DTO.Comment;
 using SocialMedia.Core.Entities.CommentEntity;
 
-namespace SocialMedia.Core.Services
+namespace SocialMedia.Core.Services 
 {
     public class CommentRepliesService : ICommentRepliesService
     {

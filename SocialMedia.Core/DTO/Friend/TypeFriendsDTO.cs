@@ -1,6 +1,6 @@
 ﻿using System.Drawing;
 
-namespace SocialMedia.Core.Entities.DTO
+namespace SocialMedia.Core.DTO.Friend
 {
     public class TypeFriendsDTO
     {

@@ -5,11 +5,10 @@ namespace SocialMedia.Infrastructure.Repositories
 {
     public interface ICommentRepository
     {
-        Task<IEnumerable<Comment>> GetAllComments();
-        Task<Comment> GetCommentById(int id);
-        Task<IEnumerable<Comment>> GetCommentByPostID(int postID);
-        Task<int> AddComment(Comment comment);
-        Task UpdateComment(Comment comment);
-        Task DeleteComment(int id);
+        Task<Comment> GetCommentByIdAsync(int id);
+        Task<List<Comment>?> GetCommentByPostIdAsync(int postID);
+        Task<Comment?> AddCommentAsync(Comment comment);
+        Task<Comment?> UpdateCommentAsync(Comment comment);
+        Task<bool> DeleteCommentAsync(int id);
     }
 }
