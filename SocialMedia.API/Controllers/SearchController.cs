@@ -15,14 +15,5 @@ namespace Social_Media.Controllers
         {
             _searchService = searchService;
         }
-
-        //Search user by string data (email or phone number)
-        [HttpGet("SearchUser/{stringData}/{CurrentUserIdSearch}")]
-        public async Task<IActionResult> SearchUser(string stringData, string CurrentUserIdSearch)
-        {
-            var user = await _searchService.FindUserAsync(stringData, CurrentUserIdSearch);
-            if (user == null) return NotFound();
-            return Ok(user);
-        }
     }
 }

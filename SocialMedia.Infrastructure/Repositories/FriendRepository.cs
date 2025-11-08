@@ -102,5 +102,10 @@ namespace SocialMedia.Infrastructure.Repositories
 
             return result;
         }
+
+        public async Task<Friends?> GetFriendAsync (string userA, string userB)
+        {
+            return await _context.friends.FirstOrDefaultAsync(f => (f.UserID == userA && f.FriendID == userB) || (f.FriendID == userA && f.UserID == userB));
+        }
     }
 }

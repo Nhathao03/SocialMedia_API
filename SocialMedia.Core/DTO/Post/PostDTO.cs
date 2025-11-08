@@ -1,30 +1,25 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Net.Sockets;
 using SocialMedia.Core.Entities.DTO.Comment;
 
 namespace SocialMedia.Core.DTO.Post
 {
     public class PostDTO
     {
-        [Required(ErrorMessage ="UserId is required")]
-        public string UserId { get; set; }
+        public string? UserID { get; set; }
         public string? Content { get; set; }
-        public int? ViewsCount { get; set; }
-        public int? SharesCount { get; set; }
-        public List<PostImageDTO>? PostImages { get; set; }
-        [Required]
+        public int? Views { get; set; }
+        public int? Share { get; set; } = 0;
         public int PostCategoryID { get; set; }
-        public int? postId { get; set; }
-        public string? Username { get; set; }
-        public string? UserAvatar { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
-        public PostCategoryDTO? postCategory { get; set; }
-        public List<CommentDTO>? Comments { get; set; }
-        public List<LikeDTO>? Likes { get; set; }
+        public List<PostImageDTO>? PostImages { get; set; }
     }
 
-    public class PostCategoryDTO
+    public class PostImageDTO
     {
-        public string Name { get; set; }
+        public string? Url { get; set; }
     }
 }
+
+

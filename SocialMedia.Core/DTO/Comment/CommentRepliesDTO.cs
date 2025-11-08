@@ -4,7 +4,6 @@ namespace SocialMedia.Core.Entities.DTO.Comment
 {
     public class CommentRepliesDTO
     {
-        public int Id { get; set; }
         [Required]
         public string userId { get; set; }
         [Required]

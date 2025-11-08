@@ -23,14 +23,11 @@ namespace SocialMedia.Infrastructure.Data
         public DbSet<Address> addresses { get; set; }
         public DbSet<Friends> friends { get; set; }
         public DbSet<Type_Friends> type_friends { get; set; }
-        public DbSet<Follower> followers { get; set; }
-        public DbSet<Following> followings { get; set; }
         public DbSet<FriendRequest> friendRequests { get; set; }
         public DbSet<Report> reports { get; set; }
         public DbSet<Role> role { get; set; }
         public DbSet<RoleCheck> roleChecks { get; set; }
         public DbSet<Notification> notifications { get; set; }
-        public DbSet<CommentReactions> commentReactions { get; set; }
         public DbSet<CommentReplies> commentReplies { get; set; }
     }
 }

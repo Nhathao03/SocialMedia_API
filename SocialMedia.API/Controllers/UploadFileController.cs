@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using SocialMedia.Core.DTO.Post;
 using SocialMedia.Core.Services;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace Social_Media.Controllers
 {
@@ -8,7 +10,8 @@ namespace Social_Media.Controllers
     public class UploadFileController : ControllerBase
     {
         //Upload file post to wwwroot
-        [HttpPost("UploadFile")]
+        [HttpPost("post")]
+        [SwaggerOperation(Summary = "Upload file post to wwwroot")]
         public async Task<IActionResult> UploadFile (IFormFile file)
         {
             if(file != null && file.Length > 0)
@@ -25,7 +28,8 @@ namespace Social_Media.Controllers
         }
         
         //Upload file comment to wwwroot
-        [HttpPost("UploadFileComment")]
+        [HttpPost("comment")]
+        [SwaggerOperation(Summary = "Upload file comment to wwwroot")]
         public async Task<IActionResult> UploadFileComment (IFormFile file)
         {
             if(file != null && file.Length > 0)
@@ -42,7 +46,8 @@ namespace Social_Media.Controllers
         }
         
         //Upload avatar user to wwwroot
-        [HttpPost("UploadAvatarUser")]
+        [HttpPost("avatar")]
+        [SwaggerOperation(Summary = "Upload avatar user to wwwroot")]
         public async Task<IActionResult> UploadAvatarUser(IFormFile file)
         {
             if(file != null && file.Length > 0)
@@ -59,7 +64,8 @@ namespace Social_Media.Controllers
         }
 
         //Upload background user to wwwroot
-        [HttpPost("UploadBackgroundUser")]
+        [HttpPost("background")]
+        [SwaggerOperation(Summary = "Upload background user to wwwroot")]
         public async Task<IActionResult> UploadBackgroundUser(IFormFile file)
         {
             if (file != null && file.Length > 0)

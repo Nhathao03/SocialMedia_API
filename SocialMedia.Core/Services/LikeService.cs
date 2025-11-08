@@ -1,63 +1,90 @@
-﻿using SocialMedia.Infrastructure.Repositories;
-using SocialMedia.Core.Entities.PostEntity;
+﻿using AutoMapper;
+using Microsoft.Extensions.Logging;
 using SocialMedia.Core.DTO.Post;
+using SocialMedia.Core.Entities.Entity;
+using SocialMedia.Core.Entities.PostEntity;
+using SocialMedia.Core.Interfaces.ServiceInterfaces;
+using SocialMedia.Infrastructure.Repositories;
 
 namespace SocialMedia.Core.Services
 {
     public class LikeService : ILikeService
     {
-        private readonly ILikeRepository _likeRepository;
+        private readonly IUnitOfWork _unitOfWork;
+        private readonly ILogger<LikeService> _logger;
+        private readonly IMapper _mapper;
 
-        public LikeService(ILikeRepository repository)
+        public LikeService(IUnitOfWork unitOfWork,
+            ILogger<LikeService> logger,
+            IMapper mapper)
         {
-            _likeRepository = repository;
+            _unitOfWork = unitOfWork;
+            _logger = logger;
+            _mapper = mapper;
         }
 
-        public async Task<IEnumerable<Like>> GetAllLikeAsync()
+        public async Task AddReactionAsync(LikeDTO dto)
         {
-            return await _likeRepository.GetAllLikes();
-        }
-
-        public async Task<Like> GetLikeByIdAsync(int id)
-        {
-            return await _likeRepository.GetLikeById(id);
-        }
-
-        public async Task AddLikeAsync(LikeDTO likeDTO)
-        {
-            var likeData = new Like
+            if (string.IsNullOrWhiteSpace(dto.UserId) || dto.EntityId <= 0)
             {
-                UserId = likeDTO.UserID,
-                PostId = likeDTO.postID,
-                CreatedAt = DateTime.UtcNow,
-            };
-
-            await _likeRepository.AddLike(likeData);
+                _logger.LogWarning("Invalid input data");
+                throw new ArgumentException("Invalid input data");
+            }
+            var like = _mapper.Map<Like>(dto);
+            await _unitOfWork.LikePostRepository.AddReactionAsync(like);
         }
 
-        public async Task UpdateLikeAsync(LikeDTO modelDTO)
+        public async Task<bool> RemoveReactionAsync(LikeDTO dto)
         {
-            var like = await _likeRepository.GetLikeById(modelDTO.Id);
-            if (like == null) throw new Exception("Like not found");
-            like.Likes++;
-
-            await _likeRepository.UpdateLike(like);
+            if (string.IsNullOrWhiteSpace(dto.UserId) || dto.EntityId <= 0)
+            {
+                _logger.LogWarning("Invalid input data");
+                throw new ArgumentException("Invalid input data");
+            }
+            var like = _mapper.Map<Like>(dto);
+            return await _unitOfWork.LikePostRepository.RemoveReactionAsync(like);
         }
 
-        public async Task DeleteLikeAsync(int id)
+        public async Task<bool> ToggleReactionAsync(LikeDTO dto)
         {
-            await _likeRepository.DeleteLike(id);
-        } 
-
-        public async Task<Like?> CheckLikeUserOnPost(string userId, int postId)
-        {
-           var data = await _likeRepository.GetLikeByUserAndPost(userId, postId);
-            return data;
+            if (string.IsNullOrWhiteSpace(dto.UserId) || dto.EntityId <= 0)
+            {
+                _logger.LogWarning("Invalid input data");
+                throw new ArgumentException("Invalid input data");
+            }
+            var like = _mapper.Map<Like>(dto);
+            return await _unitOfWork.LikePostRepository.ToggleReactionAsync(like);
         }
 
-        public async Task<IEnumerable<Like>> GetLikesByPostIdAsync(int postId)
+        public async Task<int> GetReactionCountAsync(int entityId, EntityTypeEnum entity)
         {
-            return await _likeRepository.GetLikesByPostId(postId);
+            if (entityId <= 0)
+            {
+                _logger.LogWarning("Invalid input data");
+                throw new ArgumentException("Invalid input data");
+            }
+            return await _unitOfWork.LikePostRepository.GetReactionCountAsync(entityId, entity);
+        }
+
+        public async Task<bool> HasUserReactionAsync(LikeDTO dto)
+        {
+            if (string.IsNullOrWhiteSpace(dto.UserId) || dto.EntityId <= 0)
+            {
+                _logger.LogWarning("Invalid input data");
+                throw new ArgumentException("Invalid input data");
+            }
+            var like = _mapper.Map<Like>(dto);
+            return await _unitOfWork.LikePostRepository.HasUserReactionAsync(like);
+        }
+
+        public async Task<List<string?>> GetUsersReactionAsync(int entityId, EntityTypeEnum entity)
+        {
+            if (entityId <= 0)
+            {
+                _logger.LogWarning("Invalid input data");
+                throw new ArgumentException("Invalid input data");
+            }
+            return await _unitOfWork.LikePostRepository.GetUsersReactionAsync(entityId, entity);
         }
     }
 }

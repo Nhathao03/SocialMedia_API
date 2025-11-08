@@ -21,7 +21,7 @@ namespace SocialMedia.Infrastructure.Repositories
             return await _context.roleChecks.ToListAsync();
         }
 
-        public async Task<RoleCheck> GetRoleCheckById(int id)
+        public async Task<RoleCheck?> GetRoleCheckById(int id)
         {
             return await _context.roleChecks.FirstOrDefaultAsync(p => p.Id == id);
         }

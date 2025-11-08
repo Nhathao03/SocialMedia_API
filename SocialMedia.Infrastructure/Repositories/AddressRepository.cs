@@ -14,12 +14,12 @@ namespace SocialMedia.Infrastructure.Repositories
             _context = context;
         }
 
-        public async Task<List<Address>> GetAllAddressAsync()
+        public async Task<List<Address>?> GetAllAddressAsync()
         {
             return await _context.addresses.ToListAsync();
         }
 
-        public async Task<Address> GetAddressByIdAsync(int id)
+        public async Task<Address?> GetAddressByIdAsync(int id)
         {
             return await _context.addresses.FindAsync(id);
         }

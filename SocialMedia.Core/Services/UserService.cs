@@ -36,17 +36,17 @@ namespace SocialMedia.Core.Services
             _mapper = mapper;
         }
 
-        public async Task<IEnumerable<User>> GetAllUsersAsync()
+        public async Task<IEnumerable<User?>?> GetAllUsersAsync()
         {
             return await _unitOfWork.UserRepository.GetAllUser();
         }
 
-        public async Task<User> GetUserByIdAsync(string id)
+        public async Task<User?> GetUserByIdAsync(string id)
         {
             return await _unitOfWork.UserRepository.GetUserById(id);
         }
 
-        public async Task<User> GetUserByEmailAsync(string email)
+        public async Task<User?> GetUserByEmailAsync(string email)
         {
             return await _unitOfWork.UserRepository.GetUserByEmail(email);
         }
@@ -84,7 +84,7 @@ namespace SocialMedia.Core.Services
         }
 
         //Register account
-        public async Task<AuthResultDTO> RegisterAccountAsync(RegisterDTO model)
+        public async Task<AuthResultDTO?> RegisterAccountAsync(RegisterDTO model)
         {
             _logger.LogInformation("Registering new user with email: {Email}", model.Email);
 
@@ -150,7 +150,7 @@ namespace SocialMedia.Core.Services
            };
         }
 
-        public async Task<AuthResultDTO> LoginAsync(LoginDTO model)
+        public async Task<AuthResultDTO?> LoginAsync(LoginDTO model)
         {
             _logger.LogInformation("Attempting login for email: {Email}", model.Email);
             var user = await _unitOfWork.UserRepository.GetUserByEmail(model.Email);

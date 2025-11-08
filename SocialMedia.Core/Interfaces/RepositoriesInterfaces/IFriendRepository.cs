@@ -1,4 +1,5 @@
-﻿using SocialMedia.Core.Entities.DTO;
+﻿using Social_Media.Helpers;
+using SocialMedia.Core.Entities.DTO;
 using SocialMedia.Core.Entities.FriendEntity;
 
 namespace SocialMedia.Infrastructure.Repositories
@@ -11,6 +12,7 @@ namespace SocialMedia.Infrastructure.Repositories
         Task<bool> DeleteFriendAsync(int id);
         Task<List<Friends>?> GetFriendRecentlyAddedAsync(string userId);
         Task<List<Friends>?> GetFriendOfEachUserAsync(string userId);
-        Task<List<Friends>?> GetFriendBaseOnHomeTownAsync(string userId);    
+        Task<List<Friends>?> GetFriendBaseOnHomeTownAsync(string userId);  
+        Task<Friends?> GetFriendAsync(string userA, string userB);
     }
 }

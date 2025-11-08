@@ -71,12 +71,12 @@ namespace SocialMedia.Core.Services
             return true;
         } 
 
-        public async Task<List<Message>> GetMessageByReceiverIdAndSenderIdAsync(string userId1, string userId2)
+        public async Task<List<Message>?> GetMessageByReceiverIdAndSenderIdAsync(string userId1, string userId2)
         {
             return await _unitOfWork.MessageRepository.GetMessageByReceiverIdAndSenderIdAsync(userId1, userId2);
         }
 
-        public async Task<List<Message>> GetMessageLastestAsync(string userId1, string userId2)
+        public async Task<List<Message>?> GetMessageLastestAsync(string userId1, string userId2)
         {
             return await _unitOfWork.MessageRepository.GetMessageLastestAsync(userId1, userId2);
         }

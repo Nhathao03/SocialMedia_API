@@ -14,37 +14,33 @@ namespace SocialMedia.Infrastructure.Repositories
             _context = context;
         }
 
-        public async Task<IEnumerable<CommentReplies>> GetAllCommentReplies()
-        {
-            return await _context.commentReplies.ToListAsync();
-        }
-
-        public async Task<CommentReplies> GetCommentRepliesById(int id)
+        public async Task<CommentReplies?> GetCommentRepliesByIdAsync(int id)
         {
             return await _context.commentReplies.FindAsync(id);
         }
 
-        public async Task<int> AddNewCommentReplies(CommentReplies commentReplies)
+        public async Task<CommentReplies?> AddNewCommentRepliesAsync(CommentReplies commentReplies)
         {
-            var data = _context.commentReplies.Add(commentReplies);
+            _context.commentReplies.Add(commentReplies);
             await _context.SaveChangesAsync();
-            return data.Entity.Id;
+            return commentReplies;
         }
 
-        public async Task UpdateCommentReplies(CommentReplies commentReplies)
+        public async Task<CommentReplies?> UpdateCommentRepliesAsync(CommentReplies commentReplies)
         {
             _context.commentReplies.Update(commentReplies);
             await _context.SaveChangesAsync();
+            return commentReplies;
         }
 
-        public async Task DeleteCommentReplies(int id)
+        public async Task<bool> DeleteCommentRepliesAsync(int id)
         {
             var commentReplies = await _context.commentReplies.FindAsync(id);
-            if (commentReplies != null)
-            {
-                _context.commentReplies.Remove(commentReplies);
-                await _context.SaveChangesAsync();
-            }
+            if(commentReplies is null)
+                return false;
+            _context.commentReplies.Remove(commentReplies);
+            await _context.SaveChangesAsync();
+            return true;
         }
     }
 }

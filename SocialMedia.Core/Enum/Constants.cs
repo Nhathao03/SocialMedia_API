@@ -20,7 +20,7 @@ namespace Social_Media.Helpers
             Removed = 6     
         }
 
-        public enum FriendsEnum
+        public enum FriendsStatus
         {
             [Description("Normal")]
             Normal = 5,
@@ -30,26 +30,36 @@ namespace Social_Media.Helpers
             Home_Town = 2,
         }
 
-        public enum NotificationTypeEnum
-        {
-            [Description("Like")]
-            Like = 1,
-            [Description("Comment")]
-            Comment = 2,
-            [Description("FriendRequest")]
-            FriendRequest = 3,
-            [Description("PostShare")]
-            PostShare = 4,
-            [Description("Message")]
-            Message = 5,
-        }
-
-        public enum ReportStatusEnum
+        public enum ReportStatus
         {
             [Description("Pending")]
             Pending = 1,
             [Description("Resolved")]
             Resolved = 2,
         }
+    }
+
+    public enum FriendShipStatus
+    {
+        None,
+        Pending,
+        Friends,
+        Rejected
+    }
+
+    public enum ReportType
+    {
+        Post = 1,
+        Comment = 2,
+        User = 3,
+        Reply = 4
+    }
+
+    public enum  ReportStatus
+    {
+        Pending = 1,
+        Reviewing = 2,
+        Resolved = 3,
+        Rejected = 4
     }
 }

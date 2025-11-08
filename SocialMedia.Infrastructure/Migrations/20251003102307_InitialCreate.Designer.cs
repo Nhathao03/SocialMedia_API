@@ -345,7 +345,7 @@ namespace SocialMedia.Infrastructure.Migrations
                     b.ToTable("notifications");
                 });
 
-            modelBuilder.Entity("SocialMedia.Core.Entities.PostEntity.Like", b =>
+            modelBuilder.Entity("SocialMedia.Core.Entities.PostEntity.likes", b =>
                 {
                     b.Property<int>("ID")
                         .ValueGeneratedOnAdd()
@@ -675,7 +675,7 @@ namespace SocialMedia.Infrastructure.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("SocialMedia.Core.Entities.PostEntity.Like", b =>
+            modelBuilder.Entity("SocialMedia.Core.Entities.PostEntity.likes", b =>
                 {
                     b.HasOne("SocialMedia.Core.Entities.PostEntity.Post", "Post")
                         .WithMany("Likes")

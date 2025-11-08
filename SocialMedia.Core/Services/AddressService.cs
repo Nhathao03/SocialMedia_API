@@ -28,7 +28,7 @@ namespace SocialMedia.Core.Services
             return await _unitOfWork.AddressRepository.GetAllAddressAsync();
         }
 
-        public async Task<Address> GetAddressByIdAsync(int id)
+        public async Task<Address?> GetAddressByIdAsync(int id)
         {
             _logger.LogInformation("Retrieving address by ID {AddressId}", id);
             return await _unitOfWork.AddressRepository.GetAddressByIdAsync(id);

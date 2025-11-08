@@ -6,7 +6,7 @@ namespace SocialMedia.Core.Services
 {
     public interface ICommentService
     {
-        Task<Comment> GetCommentByIdAsync(int id);
+        Task<Comment?> GetCommentByIdAsync(int id);
         Task<List<Comment>?> GetCommentByPostIdAsync(int id);
         Task<RetriveCommentDTO?> AddCommentAsync(CommentDTO comment);
         Task<RetriveCommentDTO?> UpdateCommentAsync(int id, CommentDTO comment);

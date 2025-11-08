@@ -12,11 +12,10 @@ namespace SocialMedia.Core.Interfaces.ServiceInterfaces
     {
         public IAddressRepository AddressRepository { get; }
         public ICommentRepository CommentRepository { get; }
-        public ICommentReactionsRepository CommentReactionsRepository { get; }
         public ICommentRepliesRepository CommentRepliesRepository { get; }
         public IFriendRepository FriendRepository { get; }
         public IFriendRequestRepository FriendRequestRepository { get; }
-        public ILikeRepository LikeRepository { get; }
+        public ILikeRepository LikePostRepository { get; }
         public IMessageRepository MessageRepository { get; }
         public INotificationRepository NotificationRepository { get; }
         public IPostImageRepository PostImageRepository { get; }

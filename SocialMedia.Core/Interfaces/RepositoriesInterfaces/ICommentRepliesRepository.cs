@@ -4,10 +4,9 @@ namespace SocialMedia.Infrastructure.Repositories
 {
     public interface ICommentRepliesRepository
     {
-        Task<IEnumerable<CommentReplies>> GetAllCommentReplies();
-        Task<CommentReplies> GetCommentRepliesById(int id);
-        Task UpdateCommentReplies(CommentReplies commentReplies);
-        Task DeleteCommentReplies(int id);
-        Task<int> AddNewCommentReplies(CommentReplies commentReplies);
+        Task<CommentReplies?> GetCommentRepliesByIdAsync(int id);
+        Task<CommentReplies?> UpdateCommentRepliesAsync(CommentReplies commentReplies);
+        Task<bool> DeleteCommentRepliesAsync(int id);
+        Task<CommentReplies?> AddNewCommentRepliesAsync(CommentReplies commentReplies);
     }
 }

@@ -21,8 +21,6 @@ namespace SocialMedia.Core.Entities.Entity
         public DateTime UpdateAt { get; set; } = DateTime.Now;
         public string? BackgroundProfile { get; set; }
         public string? Avatar { get; set; }
-        public List<Follower> follower { get; set; }
-        public List<Following> following { get; set; }
         public string? gender { get; set; }
         public int? addressID { get; set; }
         public string NormalizeUsername { get; set; }
@@ -30,7 +28,6 @@ namespace SocialMedia.Core.Entities.Entity
         public Address? address { get; set; }
         public string? RefreshToken { get; set; }
         public DateTime? RefreshTokenExpiryTime { get; set; }
-        public ICollection<Post>? posts { get; set; }
         public ICollection<Comment>? Comments { get; set; }
         public ICollection<Like>? Likes { get; set; }
         public ICollection<Notification>? Notifications { get; set; }

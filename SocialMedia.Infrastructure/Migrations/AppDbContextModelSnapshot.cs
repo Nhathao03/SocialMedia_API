@@ -46,7 +46,6 @@ namespace SocialMedia.Infrastructure.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("UserId")
-                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("ID");
@@ -56,35 +55,6 @@ namespace SocialMedia.Infrastructure.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("comments");
-                });
-
-            modelBuilder.Entity("SocialMedia.Core.Entities.CommentEntity.CommentReactions", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("CommentId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("ReactionType")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CommentId");
-
-                    b.ToTable("commentReactions");
                 });
 
             modelBuilder.Entity("SocialMedia.Core.Entities.CommentEntity.CommentReplies", b =>
@@ -111,7 +81,6 @@ namespace SocialMedia.Infrastructure.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("UserId")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
@@ -321,15 +290,27 @@ namespace SocialMedia.Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("Content")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
                     b.Property<bool>("IsRead")
                         .HasColumnType("bit");
 
-                    b.Property<string>("Message")
+                    b.Property<int>("NotificationType")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ReceiverId")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("TargetId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TargetType")
+                        .HasColumnType("int");
 
                     b.Property<string>("UserId")
                         .IsRequired()
@@ -344,28 +325,28 @@ namespace SocialMedia.Infrastructure.Migrations
 
             modelBuilder.Entity("SocialMedia.Core.Entities.PostEntity.Like", b =>
                 {
-                    b.Property<int>("ID")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("Likes")
+                    b.Property<int>("EntityId")
                         .HasColumnType("int");
 
-                    b.Property<int>("PostId")
+                    b.Property<int>("EntityType")
+                        .HasColumnType("int");
+
+                    b.Property<int>("LikeType")
                         .HasColumnType("int");
 
                     b.Property<string>("UserId")
-                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
-                    b.HasKey("ID");
-
-                    b.HasIndex("PostId");
+                    b.HasKey("Id");
 
                     b.HasIndex("UserId");
 
@@ -395,17 +376,12 @@ namespace SocialMedia.Infrastructure.Migrations
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("UserID")
-                        .HasColumnType("nvarchar(450)");
-
                     b.Property<int?>("Views")
                         .HasColumnType("int");
 
                     b.HasKey("ID");
 
                     b.HasIndex("PostCategoryID");
-
-                    b.HasIndex("UserID");
 
                     b.ToTable("posts");
                 });
@@ -459,23 +435,31 @@ namespace SocialMedia.Infrastructure.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("PostId")
-                        .HasColumnType("int");
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Reason")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("Status")
+                    b.Property<int>("ReportStatus")
                         .HasColumnType("int");
 
-                    b.Property<string>("UserId")
+                    b.Property<int>("ReportType")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ReportedId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ReporterId")
                         .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UserId")
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("PostId");
 
                     b.HasIndex("UserId");
 
@@ -530,19 +514,15 @@ namespace SocialMedia.Infrastructure.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
 
                     b.Property<string>("name")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("name_with_type")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("slug")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("type")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("ID");
@@ -610,24 +590,11 @@ namespace SocialMedia.Infrastructure.Migrations
 
                     b.HasOne("SocialMedia.Core.Entities.Entity.User", "user")
                         .WithMany("Comments")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("UserId");
 
                     b.Navigation("Post");
 
                     b.Navigation("user");
-                });
-
-            modelBuilder.Entity("SocialMedia.Core.Entities.CommentEntity.CommentReactions", b =>
-                {
-                    b.HasOne("SocialMedia.Core.Entities.CommentEntity.Comment", "Comment")
-                        .WithMany("CommentReactions")
-                        .HasForeignKey("CommentId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Comment");
                 });
 
             modelBuilder.Entity("SocialMedia.Core.Entities.CommentEntity.CommentReplies", b =>
@@ -674,19 +641,9 @@ namespace SocialMedia.Infrastructure.Migrations
 
             modelBuilder.Entity("SocialMedia.Core.Entities.PostEntity.Like", b =>
                 {
-                    b.HasOne("SocialMedia.Core.Entities.PostEntity.Post", "Post")
-                        .WithMany("Likes")
-                        .HasForeignKey("PostId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("SocialMedia.Core.Entities.Entity.User", "user")
                         .WithMany("Likes")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Post");
+                        .HasForeignKey("UserId");
 
                     b.Navigation("user");
                 });
@@ -699,13 +656,7 @@ namespace SocialMedia.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("SocialMedia.Core.Entities.Entity.User", "user")
-                        .WithMany("posts")
-                        .HasForeignKey("UserID");
-
                     b.Navigation("PostCategory");
-
-                    b.Navigation("user");
                 });
 
             modelBuilder.Entity("SocialMedia.Core.Entities.PostEntity.PostImage", b =>
@@ -721,19 +672,9 @@ namespace SocialMedia.Infrastructure.Migrations
 
             modelBuilder.Entity("SocialMedia.Core.Entities.Report", b =>
                 {
-                    b.HasOne("SocialMedia.Core.Entities.PostEntity.Post", "Post")
-                        .WithMany("Reports")
-                        .HasForeignKey("PostId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("SocialMedia.Core.Entities.Entity.User", "User")
                         .WithMany("Reports")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Post");
+                        .HasForeignKey("UserId");
 
                     b.Navigation("User");
                 });
@@ -777,8 +718,6 @@ namespace SocialMedia.Infrastructure.Migrations
 
             modelBuilder.Entity("SocialMedia.Core.Entities.CommentEntity.Comment", b =>
                 {
-                    b.Navigation("CommentReactions");
-
                     b.Navigation("CommentReplies");
                 });
 
@@ -797,8 +736,6 @@ namespace SocialMedia.Infrastructure.Migrations
                     b.Navigation("follower");
 
                     b.Navigation("following");
-
-                    b.Navigation("posts");
                 });
 
             modelBuilder.Entity("SocialMedia.Core.Entities.FriendEntity.Type_Friends", b =>
@@ -810,11 +747,7 @@ namespace SocialMedia.Infrastructure.Migrations
                 {
                     b.Navigation("Comments");
 
-                    b.Navigation("Likes");
-
                     b.Navigation("PostImages");
-
-                    b.Navigation("Reports");
                 });
 
             modelBuilder.Entity("SocialMedia.Core.Entities.RoleEntity.Role", b =>

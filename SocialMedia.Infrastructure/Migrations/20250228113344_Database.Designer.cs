@@ -65,7 +65,7 @@ namespace SocialMedia.Infrastructure.Migrations
                     b.ToTable("comments");
                 });
 
-            modelBuilder.Entity("SocialMedia.Core.Entities.Like", b =>
+            modelBuilder.Entity("SocialMedia.Core.Entities.likes", b =>
                 {
                     b.Property<int>("ID")
                         .ValueGeneratedOnAdd()
@@ -306,7 +306,7 @@ namespace SocialMedia.Infrastructure.Migrations
                     b.Navigation("Post");
                 });
 
-            modelBuilder.Entity("SocialMedia.Core.Entities.Like", b =>
+            modelBuilder.Entity("SocialMedia.Core.Entities.likes", b =>
                 {
                     b.HasOne("SocialMedia.Core.Entities.Post", "Post")
                         .WithMany("Likes")

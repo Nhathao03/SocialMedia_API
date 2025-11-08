@@ -5,13 +5,12 @@ namespace SocialMedia.Infrastructure.Repositories
 {
     public interface ILikeRepository
     {
-        Task<IEnumerable<Like>> GetAllLikes();
-        Task<Like> GetLikeById(int id);
-        Task AddLike(Like like);
-        Task UpdateLike(Like like);
-        Task DeleteLike(int id);
-        Task<Like?> GetLikeByUserAndPost(string userId, int postId);
-        Task<IEnumerable<Like>> GetLikesByPostId(int postId);
-
+        Task<Like?> GetLikeAsync(Like like);
+        Task AddReactionAsync(Like like);
+        Task<bool> RemoveReactionAsync(Like like);
+        Task<bool> ToggleReactionAsync(Like like);
+        Task<int> GetReactionCountAsync(int entityId, EntityTypeEnum entity);
+        Task<bool> HasUserReactionAsync(Like like);
+        Task<List<string?>> GetUsersReactionAsync(int entityId, EntityTypeEnum entity);
     }
 }

@@ -30,11 +30,6 @@ namespace SocialMedia.Core.Services
             }
             return sb.ToString().Normalize(System.Text.NormalizationForm.FormC);
         }
-        //Find user by username || phonenumber || email
-        public async Task<IEnumerable<User>> FindUserAsync(string stringData, string CurrentUserIdSearch)
-        {
-            string normalizedData = NormalizeString(stringData);
-            return await _searchRepository.FindUser(normalizedData, CurrentUserIdSearch);
-        }
+
     }
 }

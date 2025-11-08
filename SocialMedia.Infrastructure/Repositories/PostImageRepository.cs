@@ -13,49 +13,42 @@ namespace SocialMedia.Infrastructure.Repositories
             _context = context;
         }
 
-        public async Task<IEnumerable<PostImage>> GetAllPostImage()
-        {
-            return await _context.post_image.ToListAsync();
-        }
-
-        public async Task<PostImage> GetPostImageById(int id)
+        public async Task<PostImage?> GetPostImageByIdAsync(int id)
         {
             return await _context.post_image.FirstOrDefaultAsync(p => p.ID == id);
         }
 
-        public async Task AddPostImage(List<PostImage> postImages)
+        public async Task AddPostImageAsync(List<PostImage> postImages)
         {
             _context.post_image.AddRange(postImages);
             await _context.SaveChangesAsync();
         }
 
-        public async Task UpdatePostImage(PostImage postImage)
+        public async Task UpdatePostImageAsync(PostImage postImage)
         {
             _context.post_image.Update(postImage);
             await _context.SaveChangesAsync();
         }
 
-        public async Task DeletePostImage(int id)
+        public async Task<bool> DeletePostImageAsync(int id)
         {
             var postImage = await _context.post_image.FindAsync(id);
-            if (postImage != null)
-            {
-                _context.post_image.Remove(postImage);
-                await _context.SaveChangesAsync();
-            }
+            if(postImage is null)
+                return false;
+            _context.post_image.Remove(postImage);
+            await _context.SaveChangesAsync();
+            return true;
         }
 
-        public async Task<List<PostImage>> GetAllPostImagesByUserID(string userId)
-        {
-            var postImages = await _context.post_image.Where(pi => _context.posts.Where(p => p.UserID == userId)
-                .Select(p => p.ID)
-                .Contains(pi.PostId))
-                .ToListAsync();
+        //public async Task<IEnumerable<PostImage>?> GetPostImagesByUserIdAsync(string userId)
+        //{
+        //    return await _context.post_image.Where(pi => _context.posts.Where(p => p.UserID == userId)
+        //        .Select(p => p.ID)
+        //        .Contains(pi.PostId))
+        //        .ToListAsync();
+        //}
 
-            return postImages;
-        }
-
-        public async Task<List<PostImage>> GetPostImagesByPostID(int postId)
+        public async Task<IEnumerable<PostImage>?> GetPostImagesByPostIdAsync(int postId)
         {
             return await _context.post_image.Where(pi => pi.PostId == postId).ToListAsync();
         }

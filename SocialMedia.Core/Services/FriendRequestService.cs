@@ -66,7 +66,7 @@ namespace SocialMedia.Core.Services
                             {
                                 UserID = existingRequest.SenderID,
                                 FriendID = existingRequest.ReceiverID,
-                                Type_FriendsID = (int)Constants.FriendsEnum.Normal
+                                Type_FriendsID = (int)Constants.FriendsStatus.Normal
                             };
                             var mapperFriend = _mapper.Map<Friends>(addFriend);
 
@@ -155,7 +155,7 @@ namespace SocialMedia.Core.Services
             {
                 UserID = existingFriendRequest.SenderID,
                 FriendID = existingFriendRequest.ReceiverID,
-                Type_FriendsID = (int)Constants.FriendsEnum.Normal,
+                Type_FriendsID = (int)Constants.FriendsStatus.Normal,
             };
 
             var friend = _mapper.Map<Friends>(friendData);

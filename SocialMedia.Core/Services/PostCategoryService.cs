@@ -27,18 +27,18 @@ namespace SocialMedia.Core.Services
             return await _unitOfWork.PostCategoryRepository.GetAllPostCategoryAsync();
         }
 
-        public async Task<PostCategory> GetPostCategoryByIdAsync(int id)
+        public async Task<PostCategory?> GetPostCategoryByIdAsync(int id)
         {
             return await _unitOfWork.PostCategoryRepository.GetPostCategoryByIdAsync(id);
         }
 
         public async Task<RetriveCategoryDTO?> AddPostCategoryAsync(PostCategoryDTO dto)
         {
-            _logger.LogInformation("Adding a new post category with {CategoryName}", dto?.Name);
+            _logger.LogInformation("Adding a new post category with {CategoryName}", dto?.name);
             if(dto is null)
                 throw new ArgumentNullException(nameof(PostCategoryDTO), "Post category data is required.");
-            if(string.IsNullOrWhiteSpace(dto.Name))
-                throw new ArgumentException("Post category name cannot be empty.", nameof(dto.Name));
+            if(string.IsNullOrWhiteSpace(dto.name))
+                throw new ArgumentException("Post category name cannot be empty.", nameof(dto.name));
 
             var category = _mapper.Map<PostCategory>(dto);
             var result = await _unitOfWork.PostCategoryRepository.AddPostCategoryAsync(category);

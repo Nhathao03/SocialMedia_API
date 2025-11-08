@@ -4,11 +4,6 @@ using SocialMedia.Core.DTO.Post;
 using SocialMedia.Core.Entities.CommentEntity;
 using SocialMedia.Core.Entities.DTO.Comment;
 using SocialMedia.Core.Entities.PostEntity;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SocialMedia.Core.Mapping
 {
@@ -16,10 +11,16 @@ namespace SocialMedia.Core.Mapping
     {
         public PostMapping() 
         {
+            CreateMap<Post, PostDTO>().ReverseMap();
+            CreateMap<Post, RetrivePostDTO>().ReverseMap();
             CreateMap<PostCategory, PostCategoryDTO>().ReverseMap();
             CreateMap<PostCategory, RetriveCategoryDTO>().ReverseMap();
             CreateMap<Comment, CommentDTO>().ReverseMap();
             CreateMap<Comment, RetriveCommentDTO>().ReverseMap();
+            CreateMap<CommentReplies, CommentRepliesDTO>().ReverseMap();
+            CreateMap<CommentReplies, RetriveCommentRepliesDTO>().ReverseMap();
+            CreateMap<PostImage, PostImageDTO>().ReverseMap();
+            CreateMap<Like, LikeDTO>().ReverseMap();
         }
     }
 }

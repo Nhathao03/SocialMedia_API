@@ -200,12 +200,8 @@ namespace Social_Media.Controllers
         [SwaggerOperation(Summary = "Reset password", Description = "Resets the user's password using the provided OTP.")]
         public async Task<IActionResult> ResetPasswordAsync([FromBody] ResetPasswordDTO dto)
         {
-            var email = User.FindFirstValue(ClaimTypes.Email);
-            // If email don't exist in OTP store, it means forgot password request not sent
-            if (!_otpStore.ContainsKey(email))
-                return ApiResponseHelper.BadRequest("Please request forgot password first");
 
-            var (otp, expiry) = _otpStore[email];
+            var (otp, expiry) = _otpStore[dto.Email];
 
             // Check if OTP is valid and not expired
             if (otp != dto.Otp || DateTime.UtcNow > expiry)
@@ -214,7 +210,7 @@ namespace Social_Media.Controllers
             if (dto.NewPassword != dto.ConfirmPassword)
                 return ApiResponseHelper.BadRequest("New password and confirm password do not match");
 
-            var user = await _userService.GetUserByEmailAsync(email);
+            var user = await _userService.GetUserByEmailAsync(dto.Email);
             if (user == null) return BadRequest("User not exist");
 
             // Hash new password by BCrypt
@@ -222,7 +218,7 @@ namespace Social_Media.Controllers
             await _userService.UpdateUserAsync(user);
 
             // Delete OTP after successful reset
-            _otpStore.Remove(email);
+            _otpStore.Remove(dto.Email);
 
             return ApiResponseHelper.Success("Reset password successfully");
         }
