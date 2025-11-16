@@ -5,9 +5,9 @@ namespace SocialMedia.Core.Services
     public interface IUserLoginService
     {
         Task<IEnumerable<UserLogins>> GetAllUserLoginsAsync();
-        Task<UserLogins> GetUserLoginByIdAsync(int id);
+        Task<UserLogins> GetUserLoginByIdAsync(int Id);
         Task UpdateUserLoginAsync(UserLogins userLogins);
-        Task DeleteUserLoginAsync(int id);
+        Task DeleteUserLoginAsync(int Id);
         Task AddUserLoginsAsync (UserLogins userLogins);
     }
 }

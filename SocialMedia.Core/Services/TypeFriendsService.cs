@@ -18,9 +18,9 @@ namespace SocialMedia.Core.Services
             return await _TypeFriendsRepository.GetAllTypeFriends();
         }
 
-        public async Task<Type_Friends> GetTypeFriendsByIdAsync(int id)
+        public async Task<Type_Friends> GetTypeFriendsByIdAsync(int Id)
         {
-            return await _TypeFriendsRepository.GetTypeFriendsById(id);
+            return await _TypeFriendsRepository.GetTypeFriendsById(Id);
         }
 
         public async Task AddTypeFriendsAsync(TypeFriendsDTO TypeFriends)
@@ -37,9 +37,9 @@ namespace SocialMedia.Core.Services
             await _TypeFriendsRepository.UpdateTypeFriends(TypeFriends);
         }
 
-        public async Task DeleteTypeFriendsAsync(int id)
+        public async Task DeleteTypeFriendsAsync(int Id)
         {
-            await _TypeFriendsRepository.DeleteTypeFriends(id);
+            await _TypeFriendsRepository.DeleteTypeFriends(Id);
         } 
     }
 }

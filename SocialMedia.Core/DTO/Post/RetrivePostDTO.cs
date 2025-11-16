@@ -8,7 +8,7 @@ namespace SocialMedia.Core.DTO.Post
     public class RetrivePostDTO
     {
         public int Id { get; set; }
-        public string? UserID { get; set; }
+        public string? UserId { get; set; }
         public string? Content { get; set; }
         public int? Views { get; set; }
         public int? Share { get; set; }
@@ -24,6 +24,5 @@ namespace SocialMedia.Core.DTO.Post
         // Navigation properties
         public List<Entities.CommentEntity.Comment>? Comments { get; set; }
         public List<Entities.Report>? Reports { get; set; }
-        public List<CommentReplies>? CommentReplies { get; set; }
     }
 }

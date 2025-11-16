@@ -34,7 +34,7 @@ namespace Social_Media.Controllers
                 {
                     return ApiResponseHelper.NotFound("Failed to create report.");
                 }
-                return CreatedAtAction(nameof(GetReportById), new { id = createdReport.Id }, createdReport);
+                return CreatedAtAction(nameof(GetReportById), new { Id = createdReport.Id }, createdReport);
             }
             catch (Exception ex)
             {
@@ -42,24 +42,24 @@ namespace Social_Media.Controllers
             }
         }
 
-        [HttpGet("{id:int}")]
-        [SwaggerOperation(Summary = "Retrieves a report by its ID")]
+        [HttpGet("{Id:int}")]
+        [SwaggerOperation(Summary = "Retrieves a report by its Id")]
         [ProducesResponseType(typeof(RetriveReportDTO), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> GetReportById(int id)
+        public async Task<IActionResult> GetReportById(int Id)
         {
             try
             {
-                var report = await _reportService.GetReportAsync(id);
+                var report = await _reportService.GetReportAsync(Id);
                 if (report == null)
                 {
-                    return ApiResponseHelper.NotFound($"Report with Id {id} not found.");
+                    return ApiResponseHelper.NotFound($"Report with Id {Id} not found.");
                 }
                 return ApiResponseHelper.Success(report, "Report retrieved successfully.");
             }
             catch (Exception ex)
             {
-                return ApiResponseHelper.InternalServerError(ex.Message);
+                return StatusCode(500, $"Error: {ex.InnerException?.Message}");
             }
 
         }
@@ -81,7 +81,7 @@ namespace Social_Media.Controllers
         }
 
         [HttpGet("user/{userId}")]
-        [SwaggerOperation(Summary = "Retrieves reports by user ID")]
+        [SwaggerOperation(Summary = "Retrieves reports by user Id")]
         [ProducesResponseType(typeof(IEnumerable<RetriveReportDTO>), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetReportsByUserId(string userId)
         {
@@ -92,66 +92,66 @@ namespace Social_Media.Controllers
             }
             catch (Exception ex)
             {
-                return ApiResponseHelper.InternalServerError(ex.Message);
+                return StatusCode(500, $"Error: {ex.InnerException?.Message}");
             }
         }
 
-        [HttpGet("status/{id:int}")]
+        [HttpGet("status/{Id:int}")]
         [SwaggerOperation(Summary = "Updates the status of a report")]
         [ProducesResponseType(typeof(RetriveReportDTO), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> UpdateReportStatus(int id, UpdateReportStatusDTO dto)
+        public async Task<IActionResult> UpdateReportStatus(int Id, UpdateReportStatusDTO dto)
         {
             try
             {
-                var updatedReport = await _reportService.UpdateStatusAsync(id, dto.ReportStatus);
+                var updatedReport = await _reportService.UpdateStatusAsync(Id, dto.ReportStatus);
                 if (updatedReport == null)
                 {
-                    return ApiResponseHelper.NotFound($"Report with Id {id} not found.");
+                    return ApiResponseHelper.NotFound($"Report with Id {Id} not found.");
                 }
                 return ApiResponseHelper.Success(updatedReport, "Report status updated successfully.");
             }
             catch (Exception ex)
             {
-                return ApiResponseHelper.InternalServerError(ex.Message);
+                return StatusCode(500, $"Error: {ex.InnerException?.Message}");
             }
         }
 
-        [HttpGet("action/{id:int}")]
+        [HttpGet("action/{Id:int}")]
         [SwaggerOperation(Summary = "Takes action on a report")]
         [ProducesResponseType(typeof(RetriveReportDTO), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> UpdateReportAction(int id, UpdateReportActionDTO dto)
+        public async Task<IActionResult> UpdateReportAction(int Id, UpdateReportActionDTO dto)
         {
             try
             {
-                var updatedReport = await _reportService.UpdateActionAsync(id, dto.Action);
+                var updatedReport = await _reportService.UpdateActionAsync(Id, dto.Action);
                 if (updatedReport == null)
                 {
-                    return ApiResponseHelper.NotFound($"Report with Id {id} not found.");
+                    return ApiResponseHelper.NotFound($"Report with Id {Id} not found.");
                 }
                 return ApiResponseHelper.Success(updatedReport, "Report action updated successfully.");
             }
             catch (Exception ex)
             {
-                return ApiResponseHelper.InternalServerError(ex.Message);
+                return StatusCode(500, $"Error: {ex.InnerException?.Message}");
             }
         }
 
-        [HttpDelete("{id:int}")]
-        [SwaggerOperation(Summary = "Deletes a report by its ID")]
+        [HttpDelete("{Id:int}")]
+        [SwaggerOperation(Summary = "Deletes a report by its Id")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> DeleteReport(int id)
+        public async Task<IActionResult> DeleteReport(int Id)
         {
             try
             {
-                await _reportService.DeleteAsync(id);
+                await _reportService.DeleteAsync(Id);
                 return ApiResponseHelper.Success("Report deleted successfully.");
             }
             catch (Exception ex)
             {
-                return ApiResponseHelper.InternalServerError(ex.Message);
+                return StatusCode(500, $"Error: {ex.InnerException?.Message}");
             }
         }
     }

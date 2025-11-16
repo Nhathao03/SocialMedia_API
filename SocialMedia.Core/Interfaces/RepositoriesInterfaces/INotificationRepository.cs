@@ -7,9 +7,9 @@ namespace SocialMedia.Infrastructure.Repositories
     {
         Task<IEnumerable<Notification>?> GetByUserIdAsync(string userId);
         Task<IEnumerable<Notification>?> GetUnreadByUserIdAsync(string userId);
-        Task<Notification?> GetByIdAsync(int id);
+        Task<Notification?> GetByIdAsync(int Id);
         Task<Notification?> AddNotificationAsync(Notification notification);
-        Task MarkAsReadAsync(int id);
+        Task MarkAsReadAsync(int Id);
         Task MarkAllAsReadAsync(string userId);
     }
 }

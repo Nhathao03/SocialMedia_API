@@ -6,10 +6,10 @@ namespace SocialMedia.Infrastructure.Repositories
 {
     public interface IFriendRepository
     {
-        Task<Friends?> GetFriendByIdAsync(int id);
+        Task<Friends?> GetFriendByIdAsync(int Id);
         Task<Friends?> AddFriendAsync(Friends friends);
         Task<Friends?> UpdateFriendAsync(Friends friends);
-        Task<bool> DeleteFriendAsync(int id);
+        Task<bool> DeleteFriendAsync(int Id);
         Task<List<Friends>?> GetFriendRecentlyAddedAsync(string userId);
         Task<List<Friends>?> GetFriendOfEachUserAsync(string userId);
         Task<List<Friends>?> GetFriendBaseOnHomeTownAsync(string userId);  

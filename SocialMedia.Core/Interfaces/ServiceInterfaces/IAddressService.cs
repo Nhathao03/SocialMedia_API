@@ -5,10 +5,10 @@ namespace SocialMedia.Core.Services
 {
     public interface IAddressService
     {
-        Task<List<Address>?> GetAllAddressAsync();
-        Task<Address?> GetAddressByIdAsync(int id);
+        Task<List<RetriveAddressDTO>?> GetAllAddressAsync();
+        Task<RetriveAddressDTO?> GetAddressByIdAsync(int Id);
         Task<RetriveAddressDTO?> AddAddressAsync(AddressDTO address);
         Task<RetriveAddressDTO?> UpdateAddressAsync(int addressId, AddressDTO addressDto);
-        Task<bool> DeleteAddressAsync(int id);
+        Task<bool> DeleteAddressAsync(int Id);
     }
 }

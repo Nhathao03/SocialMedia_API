@@ -1,6 +1,6 @@
 # Social Media Platform
 
-This is a social media platform built with ASP.NET Core, providing features such as user authentication, posts, comments, likes, friend management, and more.
+This is a social media platform built with ASP.NET Core, provIding features such as user authentication, posts, comments, likes, friend management, and more.
 
 ## Features
 

@@ -47,7 +47,7 @@ namespace Social_Media.Helpers
         Rejected
     }
 
-    public enum ReportType
+    public enum ReportEntityType
     {
         Post = 1,
         Comment = 2,

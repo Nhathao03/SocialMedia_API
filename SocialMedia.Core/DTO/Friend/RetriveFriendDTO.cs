@@ -12,6 +12,6 @@ namespace SocialMedia.Core.DTO.Friend
         public string userId { get; set; }
         public string FriendId { get; set; }
         public DateTime? CreatedDate { get; set; }
-        public int Type_FriendsID { get; set; }
+        public int Type_FriendsId { get; set; }
     }
 }

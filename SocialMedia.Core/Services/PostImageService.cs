@@ -22,26 +22,26 @@ namespace SocialMedia.Core.Services
             _logger = logger;
         }
 
-        public async Task<PostImage?> GetPostImageByIdAsync(int id)
+        public async Task<PostImage?> GetPostImageByIdAsync(int Id)
         {
-            _logger.LogInformation("Retrieving PostImage with ID {PostImageId}", id);
-            return await _unitOfWork.PostImageRepository.GetPostImageByIdAsync(id);
+            _logger.LogInformation("Retrieving PostImage with Id {PostImageId}", Id);
+            return await _unitOfWork.PostImageRepository.GetPostImageByIdAsync(Id);
         }
 
-        public async Task AddPostImageAsync(PostDTO dto, int postId)
+        public async Task AddPostImageAsync(CreatePostDTO dto, int postId)
         {
-            _logger.LogInformation("Adding a new PostImage for Post ID {PostId}", postId);
+            _logger.LogInformation("Adding a new PostImage for Post Id {PostId}", postId);
             if(dto is null)
                 throw new ArgumentNullException(nameof(PostImageDTO), "PostImage data is required.");
             if(postId <= 0)
-                throw new ArgumentException("Invalid Post ID.", nameof(postId));
+                throw new ArgumentException("InvalId Post Id.", nameof(postId));
             var postImages = dto.PostImages.Select(imageUrl => new PostImage
             {
                 Url = imageUrl.Url,
                 PostId = postId
             }).ToList();
             await _unitOfWork.PostImageRepository.AddPostImageAsync(postImages);
-            _logger.LogInformation("Added {Count} PostImages for Post ID {PostId}", postImages.Count, postId);
+            _logger.LogInformation("Added {Count} PostImages for Post Id {PostId}", postImages.Count, postId);
         }
 
         public async Task UpdatePostImageAsync(PostImageDTO dto)
@@ -53,17 +53,17 @@ namespace SocialMedia.Core.Services
             await  _unitOfWork.PostImageRepository.UpdatePostImageAsync(postimage);
         }
 
-        public async Task<bool> DeletePostImageAsync(int id)
+        public async Task<bool> DeletePostImageAsync(int Id)
         {
-            _logger.LogInformation("Deleting PostImage with ID {PostImageId}", id);
-            var existingPostImage = await _unitOfWork.PostImageRepository.GetPostImageByIdAsync(id);
+            _logger.LogInformation("Deleting PostImage with Id {PostImageId}", Id);
+            var existingPostImage = await _unitOfWork.PostImageRepository.GetPostImageByIdAsync(Id);
             if (existingPostImage is null)
             {
-                _logger.LogWarning("PostImage with ID {PostImageId} not found", id);
-                throw new KeyNotFoundException($"PostImage with Id {id} not exits.");
+                _logger.LogWarning("PostImage with Id {PostImageId} not found", Id);
+                throw new KeyNotFoundException($"PostImage with Id {Id} not exits.");
             }
-            var result = await _unitOfWork.PostImageRepository.DeletePostImageAsync(id);
-            _logger.LogInformation("PostImage with ID {PostImageId} deleted: {Result}", id, result);
+            var result = await _unitOfWork.PostImageRepository.DeletePostImageAsync(Id);
+            _logger.LogInformation("PostImage with Id {PostImageId} deleted: {Result}", Id, result);
             return result;
         }
 

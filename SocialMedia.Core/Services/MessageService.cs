@@ -26,9 +26,9 @@ namespace SocialMedia.Core.Services
             return await _unitOfWork.MessageRepository.GetAllMessagesAsync();
         }
 
-        public async Task<Message?> GetMessageByIdAsync(int id)
+        public async Task<Message?> GetMessageByIdAsync(int Id)
         {
-            return await _unitOfWork.MessageRepository.GetMessageByIdAsync(id);
+            return await _unitOfWork.MessageRepository.GetMessageByIdAsync(Id);
         }
 
         public async Task<RetriveMessageDTO?> AddMessageAsync(MessageDTO dto)
@@ -40,34 +40,34 @@ namespace SocialMedia.Core.Services
                 throw new ArgumentException("Message content cannot be empty.", nameof(dto.Content));
               var message = _mapper.Map<Message>(dto);
             var result = await _unitOfWork.MessageRepository.AddMessageAsync(message);
-            _logger.LogInformation("Message added with ID {MessageId}", result?.ID);
+            _logger.LogInformation("Message added with Id {MessageId}", result?.Id);
             return _mapper.Map<RetriveMessageDTO>(result);
         }
 
-        public async Task<RetriveMessageDTO?> UpdateMessageAsync(int id, MessageDTO dto)
+        public async Task<RetriveMessageDTO?> UpdateMessageAsync(int Id, MessageDTO dto)
         {
-            _logger.LogInformation("Updating message with ID {MessageId}", id);
-            var existingMessage = await _unitOfWork.MessageRepository.GetMessageByIdAsync(id);
+            _logger.LogInformation("Updating message with Id {MessageId}", Id);
+            var existingMessage = await _unitOfWork.MessageRepository.GetMessageByIdAsync(Id);
             if (existingMessage is null)
             {
-                throw new KeyNotFoundException($"Message with Id {id} not exits.");
+                throw new KeyNotFoundException($"Message with Id {Id} not exits.");
             }
             var message = _mapper.Map(dto, existingMessage);
             var result =  await _unitOfWork.MessageRepository.UpdateMessageAsync(message);
-            _logger.LogInformation("Message updated with ID {MessageId}", result?.ID);
+            _logger.LogInformation("Message updated with Id {MessageId}", result?.Id);
             return _mapper.Map<RetriveMessageDTO>(result);
         }
 
-        public async Task<bool> DeleteMessageAsync(int id)
+        public async Task<bool> DeleteMessageAsync(int Id)
         {
-            _logger.LogInformation("Deleting message with ID {MessageId}", id);
-            var exitsMessage = await _unitOfWork.MessageRepository.GetMessageByIdAsync(id);
+            _logger.LogInformation("Deleting message with Id {MessageId}", Id);
+            var exitsMessage = await _unitOfWork.MessageRepository.GetMessageByIdAsync(Id);
             if (exitsMessage is null)
             {
-                throw new KeyNotFoundException($"Message with Id {id} not exits.");
+                throw new KeyNotFoundException($"Message with Id {Id} not exits.");
             }
-            var result = await _unitOfWork.MessageRepository.DeleteMessageAsync(id);
-            _logger.LogInformation("Message with ID {MessageId} deleted successfully", id);
+            var result = await _unitOfWork.MessageRepository.DeleteMessageAsync(Id);
+            _logger.LogInformation("Message with Id {MessageId} deleted successfully", Id);
             return true;
         } 
 

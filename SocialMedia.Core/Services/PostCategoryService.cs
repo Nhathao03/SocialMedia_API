@@ -27,9 +27,9 @@ namespace SocialMedia.Core.Services
             return await _unitOfWork.PostCategoryRepository.GetAllPostCategoryAsync();
         }
 
-        public async Task<PostCategory?> GetPostCategoryByIdAsync(int id)
+        public async Task<PostCategory?> GetPostCategoryByIdAsync(int Id)
         {
-            return await _unitOfWork.PostCategoryRepository.GetPostCategoryByIdAsync(id);
+            return await _unitOfWork.PostCategoryRepository.GetPostCategoryByIdAsync(Id);
         }
 
         public async Task<RetriveCategoryDTO?> AddPostCategoryAsync(PostCategoryDTO dto)
@@ -42,35 +42,35 @@ namespace SocialMedia.Core.Services
 
             var category = _mapper.Map<PostCategory>(dto);
             var result = await _unitOfWork.PostCategoryRepository.AddPostCategoryAsync(category);
-            _logger.LogInformation("Post category added with ID {CategoryId}", result?.ID);
+            _logger.LogInformation("Post category added with Id {CategoryId}", result?.Id);
             return _mapper.Map<RetriveCategoryDTO>(result);
         }
 
-        public async Task<RetriveCategoryDTO?> UpdatePostCategoryAsync(int id, PostCategoryDTO dto)
+        public async Task<RetriveCategoryDTO?> UpdatePostCategoryAsync(int Id, PostCategoryDTO dto)
         {
-            _logger.LogInformation("Updating post category with ID {CategoryId}", id);
-            var existingCategory = await _unitOfWork.PostCategoryRepository.GetPostCategoryByIdAsync(id);
+            _logger.LogInformation("Updating post category with Id {CategoryId}", Id);
+            var existingCategory = await _unitOfWork.PostCategoryRepository.GetPostCategoryByIdAsync(Id);
             if (existingCategory is null)
             {
-                throw new KeyNotFoundException($"Post category with Id {id} not exits.");
+                throw new KeyNotFoundException($"Post category with Id {Id} not exits.");
             }
 
             var category = _mapper.Map(dto, existingCategory);
             var result =  await _unitOfWork.PostCategoryRepository.UpdatePostCategoryAsync(category);
-            _logger.LogInformation("Post category updated with ID {CategoryId}", result?.ID);
+            _logger.LogInformation("Post category updated with Id {CategoryId}", result?.Id);
             return _mapper.Map<RetriveCategoryDTO>(result);
         }
 
-        public async Task<bool> DeletePostCategoryAsync(int id)
+        public async Task<bool> DeletePostCategoryAsync(int Id)
         {
-            _logger.LogInformation("Deleting post category with ID {CategoryId}", id);
-            var existingCategory = await _unitOfWork.PostCategoryRepository.GetPostCategoryByIdAsync(id);
+            _logger.LogInformation("Deleting post category with Id {CategoryId}", Id);
+            var existingCategory = await _unitOfWork.PostCategoryRepository.GetPostCategoryByIdAsync(Id);
             if(existingCategory is null)
             {
-                throw new KeyNotFoundException($"Post category with Id {id} not exits.");
+                throw new KeyNotFoundException($"Post category with Id {Id} not exits.");
             }
-            var result = await _unitOfWork.PostCategoryRepository.DeletePostCategoryAsync(id);
-            _logger.LogInformation("Post category with ID {CategoryId} deleted successfully", id);
+            var result = await _unitOfWork.PostCategoryRepository.DeletePostCategoryAsync(Id);
+            _logger.LogInformation("Post category with Id {CategoryId} deleted successfully", Id);
             return result;
         }
     }

@@ -24,11 +24,11 @@ namespace Social_Media.Controllers
             return Ok(roleChecks);
         }
 
-        // Get role check by ID
-        [HttpGet("GetRoleCheckById/{id}")]
-        public async Task<IActionResult> GetRoleCheckById(int id)
+        // Get role check by Id
+        [HttpGet("GetRoleCheckById/{Id}")]
+        public async Task<IActionResult> GetRoleCheckById(int Id)
         {
-            var roleCheck = await _roleCheckService.GetRoleCheckByIdAsync(id);
+            var roleCheck = await _roleCheckService.GetRoleCheckByIdAsync(Id);
             if (roleCheck == null) return NotFound();
             return Ok(roleCheck);
         }
@@ -56,15 +56,15 @@ namespace Social_Media.Controllers
             return Ok("Role check updated successfully.");
         }
 
-        // Delete role check by ID
-        [HttpDelete("DeleteRoleCheck/{id}")]
-        public async Task<IActionResult> DeleteRoleCheck(int id)
+        // Delete role check by Id
+        [HttpDelete("DeleteRoleCheck/{Id}")]
+        public async Task<IActionResult> DeleteRoleCheck(int Id)
         {
-            await _roleCheckService.DeleteRoleCheckAsync(id);
+            await _roleCheckService.DeleteRoleCheckAsync(Id);
             return NoContent();
         }
 
-        // Delete role check by User ID
+        // Delete role check by User Id
         [HttpDelete("DeleteRoleCheckByUserId/{userId}")]
         public async Task<IActionResult> DeleteRoleCheckByUserId(string userId)
         {

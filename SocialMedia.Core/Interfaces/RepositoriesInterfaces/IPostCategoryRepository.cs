@@ -6,9 +6,9 @@ namespace SocialMedia.Infrastructure.Repositories
     public interface IPostCategoryRepository
     {
         Task<List<PostCategory>?> GetAllPostCategoryAsync();
-        Task<PostCategory?> GetPostCategoryByIdAsync(int id);
+        Task<PostCategory?> GetPostCategoryByIdAsync(int Id);
         Task<PostCategory?> AddPostCategoryAsync(PostCategory post);
         Task<PostCategory?> UpdatePostCategoryAsync(PostCategory post);
-        Task<bool> DeletePostCategoryAsync(int id);
+        Task<bool> DeletePostCategoryAsync(int Id);
     }
 }

@@ -24,26 +24,26 @@ namespace Social_Media.Controllers
         }
 
         /// <summary>
-        /// Retrieves a post by its ID.
+        /// Retrieves a post by its Id.
         /// </summary>
-        /// <param name="id">The unique ID of the post to retrieve.</param>
+        /// <param name="Id">The unique Id of the post to retrieve.</param>
         /// <returns>Returns the post details if found; otherwise, 404 Not Found.</returns>
-        [HttpGet("{id:int}")]
-        [SwaggerOperation(Summary = "Retrieves a post by its ID")]
+        [HttpGet("{Id:int}")]
+        [SwaggerOperation(Summary = "Retrieves a post by its Id")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> GetPostById(int id)
+        public async Task<IActionResult> GetPostById(int Id)
         {
             try
             {
-                var post = await _postService.GetPostByIdAsync(id);
+                var post = await _postService.GetPostByIdAsync(Id);
                 if (post == null)
-                    return ApiResponseHelper.NotFound($"Post with Id {id} not found.");
+                    return ApiResponseHelper.NotFound($"Post with Id {Id} not found.");
                 return ApiResponseHelper.Success(post, "Post retrieved successfully.");
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                return ApiResponseHelper.InternalServerError("An unexpected error occurred while retrieving the post.");
+                return StatusCode(500, $"Error: {ex.InnerException?.Message}");
             }
         }
 
@@ -56,7 +56,7 @@ namespace Social_Media.Controllers
         [SwaggerOperation(Summary = "Creates a new post")]
         [ProducesResponseType(typeof(RetrivePostDTO), StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> AddPost([FromBody] PostDTO dto)
+        public async Task<IActionResult> AddPost([FromBody] CreatePostDTO dto)
         {
             if (dto == null)
                 return ApiResponseHelper.BadRequest("PostDTO cannot be null.");
@@ -68,76 +68,76 @@ namespace Social_Media.Controllers
                 var createdPost = await _postService.AddPostAsync(dto);
                 if (createdPost == null)
                     return ApiResponseHelper.BadRequest("Failed to create post.");
-                return CreatedAtAction(nameof(GetPostById), new { id = createdPost.Id }, createdPost);
+                return CreatedAtAction(nameof(GetPostById), new { Id = createdPost.Id }, createdPost);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                return ApiResponseHelper.InternalServerError("An unexpected error occurred while creating the post.");
+                return StatusCode(500, $"Error: {ex.InnerException?.Message}");
             }
         }
 
         /// <summary>
-        /// Updates an existing post by its ID.
+        /// Updates an existing post by its Id.
         /// </summary>
-        /// <param name="id">The ID of the post to update.</param>
+        /// <param name="Id">The Id of the post to update.</param>
         /// <param name="dto">The updated post data.</param>
         /// <returns>Returns the updated post object.</returns>
-        [HttpPut("{id:int}")]
-        [SwaggerOperation(Summary = "Updates an existing post by its ID")]
+        [HttpPut("{Id:int}")]
+        [SwaggerOperation(Summary = "Updates an existing post by its Id")]
         [ProducesResponseType(typeof(RetrivePostDTO), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> UpdatePost(int id, [FromBody] PostDTO dto)
+        public async Task<IActionResult> UpdatePost(int Id, [FromBody] CreatePostDTO dto)
         {
             if (dto == null)
                 return ApiResponseHelper.BadRequest("PostDTO cannot be null.");
-            if (id <= 0)
-                return ApiResponseHelper.BadRequest("Invalid post ID.");
+            if (Id <= 0)
+                return ApiResponseHelper.BadRequest("InvalId post Id.");
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
             try
             {
-                var updatedPost = await _postService.UpdatePostAsync(id, dto);
+                var updatedPost = await _postService.UpdatePostAsync(Id, dto);
                 if (updatedPost == null)
-                    return ApiResponseHelper.NotFound($"Post with Id {id} not found.");
+                    return ApiResponseHelper.NotFound($"Post with Id {Id} not found.");
                 return ApiResponseHelper.Success(updatedPost, "Post updated successfully.");
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                return ApiResponseHelper.InternalServerError("An unexpected error occurred while updating the post.");
+                return StatusCode(500, $"Error: {ex.InnerException?.Message}");
             }
         }
 
         /// <summary>
-        /// Deletes a post by its ID.
+        /// Deletes a post by its Id.
         /// </summary>
-        /// <param name="id">The ID of the post to delete.</param>
+        /// <param name="Id">The Id of the post to delete.</param>
         /// <returns>Returns true if the deletion was successful.</returns>
-        [HttpDelete("{id:int}")]
-        [SwaggerOperation(Summary = "Deletes a post by its ID")]
+        [HttpDelete("{Id:int}")]
+        [SwaggerOperation(Summary = "Deletes a post by its Id")]
         [ProducesResponseType(typeof(bool), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> DeletePost(int id)
+        public async Task<IActionResult> DeletePost(int Id)
         {
-            if (id <= 0)
-                return ApiResponseHelper.BadRequest("Invalid post ID.");
+            if (Id <= 0)
+                return ApiResponseHelper.BadRequest("InvalId post Id.");
             try
             {
-                var deleted = await _postService.DeletePostAsync(id);
+                var deleted = await _postService.DeletePostAsync(Id);
                 if (!deleted)
-                    return ApiResponseHelper.NotFound($"Post with Id {id} not found.");
+                    return ApiResponseHelper.NotFound($"Post with Id {Id} not found.");
                 return ApiResponseHelper.Success(deleted, "Post deleted successfully.");
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                return ApiResponseHelper.InternalServerError("An unexpected error occurred while deleting the post.");
+                return StatusCode(500, $"Error: {ex.InnerException?.Message}");
             }
         }
 
         /// <summary>
         /// Retrieves all posts created by a specific user.
         /// </summary>
-        /// <param name="userId">The ID of the user whose posts to retrieve.</param>
+        /// <param name="userId">The Id of the user whose posts to retrieve.</param>
         /// <returns>Returns a list of posts by the specified user.</returns>
         //[HttpGet("user/{userId}")]
         //[SwaggerOperation(Summary = "Retrieves all posts created by a specific user")]
@@ -151,7 +151,7 @@ namespace Social_Media.Controllers
         //    }
         //    catch (Exception)
         //    {
-        //        return ApiResponseHelper.InternalServerError("An unexpected error occurred while retrieving posts by user ID.");
+        //        return ApiResponseHelper.InternalServerError("An unexpected error occurred while retrieving posts by user Id.");
         //    }
         //}
 
@@ -171,9 +171,9 @@ namespace Social_Media.Controllers
                 var posts = await _postService.GetRecentPostsAsync(page, pageSize);
                 return ApiResponseHelper.Success(posts, "Recent posts retrieved successfully.");
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                return ApiResponseHelper.InternalServerError("An unexpected error occurred while retrieving recent posts.");
+                return StatusCode(500, $"Error: {ex.InnerException?.Message}");
             }
         }
     }

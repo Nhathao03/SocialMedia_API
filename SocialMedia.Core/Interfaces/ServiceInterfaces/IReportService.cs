@@ -8,11 +8,11 @@ namespace SocialMedia.Core.Services
     public interface IReportService
     {
         Task<RetriveReportDTO?> CreateReportAsync(ReportDTO dto);
-        Task<RetriveReportDTO?> GetReportAsync(int id);
+        Task<RetriveReportDTO?> GetReportAsync(int Id);
         Task<IEnumerable<RetriveReportDTO?>?> GetAllReportsAsync();
         Task<IEnumerable<RetriveReportDTO?>?> GetReportsByUserIdAsync(string userId);
-        Task<RetriveReportDTO?> UpdateStatusAsync(int id, ReportStatus status);
-        Task<RetriveReportDTO?> UpdateActionAsync(int id, string action);
-        Task DeleteAsync(int id);
+        Task<RetriveReportDTO?> UpdateStatusAsync(int Id, ReportStatus status);
+        Task<RetriveReportDTO?> UpdateActionAsync(int Id, string action);
+        Task DeleteAsync(int Id);
     }
 }

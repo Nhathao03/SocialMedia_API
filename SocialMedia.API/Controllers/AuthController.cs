@@ -37,9 +37,9 @@ namespace Social_Media.Controllers
         /// Register a new user account.
         /// </summary>
         /// <param name="model">The resgister data transfer object containing content and metadata.</param>
-        /// <returns>Returns the created user object or validation errors</returns>
+        /// <returns>Returns the created user object or valIdation errors</returns>
         /// <response code="201">Register successfully</response>
-        /// <response code="400">Invalid input data</response>
+        /// <response code="400">InvalId input data</response>
         [HttpPost("register")]
         [SwaggerOperation(Summary = "Register a new user", Description = "Creates a new user account using email, password.")]
         [ProducesResponseType(StatusCodes.Status201Created)]
@@ -54,7 +54,7 @@ namespace Social_Media.Controllers
 
             if (!ModelState.IsValid)
             {
-                _logger.LogWarning("Invalid model state in RegisterAccountAsync: {ModelState}", ModelState);
+                _logger.LogWarning("InvalId model state in RegisterAccountAsync: {ModelState}", ModelState);
                 return BadRequest(ModelState);
             }
             try
@@ -71,17 +71,17 @@ namespace Social_Media.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Exception occurred in RegisterAccountAsync.");
-                return ApiResponseHelper.InternalServerError("An error occurred during registration.");
-            }
+                return StatusCode(500, $"Error: {ex.InnerException?.Message}");
+			}
         }
 
         /// <summary>
         /// Login user account.
         /// </summary>
         /// <param name="model">The login data transfer object containing content and metadata.</param>
-        /// <returns>Returns the refreshToken and accessToken or validation errors</returns>
+        /// <returns>Returns the refreshToken and accessToken or valIdation errors</returns>
         /// <response code="201">Login successfully</response>
-        /// <response code="400">Invalid input data</response>
+        /// <response code="400">InvalId input data</response>
         /// <response code="401">Unauthorized</response>
         [HttpPost("login")]
         [SwaggerOperation(Summary = "User login", Description = "Logs in user with email and password, returns JWT tokens and refresh token.")]
@@ -98,7 +98,7 @@ namespace Social_Media.Controllers
 
             if (!ModelState.IsValid)
             {
-                _logger.LogWarning("Invalid model state in LoginAccountAsync: {ModelState}", ModelState);
+                _logger.LogWarning("InvalId model state in LoginAccountAsync: {ModelState}", ModelState);
                 return BadRequest(ModelState);
             }
             try
@@ -126,7 +126,7 @@ namespace Social_Media.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Exception occurred in LoginAccountAsync.");
-                return ApiResponseHelper.InternalServerError("An error occurred during login.");
+                return StatusCode(500, $"Error: {ex.InnerException?.Message}");
 
             }
         }
@@ -137,7 +137,7 @@ namespace Social_Media.Controllers
         /// <param name="jwtToken">The unique token of the user</param>
         /// <returns>Information of token after decode</returns>
         /// <response code="200">Decode token successfully</response>
-        /// <response code="400">Invalid input data</response>
+        /// <response code="400">InvalId input data</response>
         [HttpPost("Decode")]
         [SwaggerOperation(Summary = "Decode JWT token", Description = "Decodes a JWT token and returns its header and payload.")]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -155,8 +155,8 @@ namespace Social_Media.Controllers
 
             if (!handler.CanReadToken(jwtToken))
             {
-                _logger.LogWarning("Invalid JWT token format in Decode.");
-                return ApiResponseHelper.BadRequest("Invalid JWT token format.");
+                _logger.LogWarning("InvalId JWT token format in Decode.");
+                return ApiResponseHelper.BadRequest("InvalId JWT token format.");
             }
                
             try
@@ -166,8 +166,8 @@ namespace Social_Media.Controllers
                 // Map claim key to easy readable keys
                 var claimKeyMap = new Dictionary<string, string>
                 {
-                    {"http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name", "DisplayName" },
-                    {"http://schemas.microsoft.com/ws/2008/06/identity/claims/role", "role" },
+                    {"http://schemas.xmlsoap.org/ws/2005/05/Identity/claims/name", "DisplayName" },
+                    {"http://schemas.microsoft.com/ws/2008/06/Identity/claims/role", "role" },
                 };
                 // Transform claims dictionary
                 var payload = token.Payload
@@ -188,8 +188,8 @@ namespace Social_Media.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Exception occurred while decoding JWT token in Decode.");
-                return ApiResponseHelper.InternalServerError("An error occurred while decoding the JWT token.");
-            }
+                return StatusCode(500, $"Error: {ex.InnerException?.Message}");
+			}
         }
 
 
@@ -212,9 +212,9 @@ namespace Social_Media.Controllers
         /// <param name="refreshToken">The unique refreshToken of the user</param>
         /// <returns>Returns the accessToken and refreshToken</returns>
         /// <response code="201">Access token added to cookies successfuly</response>
-        /// <response code="400">Invalid input data</response>
+        /// <response code="400">InvalId input data</response>
         [HttpPost("refresh-token")]
-        [SwaggerOperation(Summary = "Refresh JWT tokens", Description = "Refreshes JWT access and refresh tokens using a valid refresh token.")]
+        [SwaggerOperation(Summary = "Refresh JWT tokens", Description = "Refreshes JWT access and refresh tokens using a valId refresh token.")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public async Task<IActionResult> RefreshToken(string refreshToken)
@@ -222,8 +222,8 @@ namespace Social_Media.Controllers
             var user = _userService.GetUserByRefreshToken(refreshToken);
             if (user == null)
             {
-                _logger.LogWarning("Invalid refresh token provided in RefreshToken.");
-                return ApiResponseHelper.Unauthorized("Invalid refresh token.");
+                _logger.LogWarning("InvalId refresh token provIded in RefreshToken.");
+                return ApiResponseHelper.Unauthorized("InvalId refresh token.");
             }
             
             var newAccessToken = await _userService.GenerateAccessTokenAsync(user.Id);

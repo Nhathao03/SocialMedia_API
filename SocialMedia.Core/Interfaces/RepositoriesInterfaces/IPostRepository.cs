@@ -5,10 +5,10 @@ namespace SocialMedia.Infrastructure.Repositories
 {
     public interface IPostRepository
     {
-        Task<Post?> GetPostByIdAsync(int id);
+        Task<Post?> GetPostByIdAsync(int Id);
         Task<Post?> AddPostAsync(Post post);
         Task<Post?> UpdatePostAsync(Post post);
-        Task<bool> DeletePost(int id);
+        Task<bool> DeletePost(int Id);
         //Task<IEnumerable<RetrivePostDTO>?> GetPostsByUserIdAsync(string userId);
         Task<IEnumerable<Post>?> GetRecentPostsAsync(int page, int pageSize);
     }

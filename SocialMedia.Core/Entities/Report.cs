@@ -10,16 +10,14 @@ namespace SocialMedia.Core.Entities
     {
         [Key]
         public int Id { get; set; }
-        public int ReportedId { get; set; }
+        public int ReportedEntityId { get; set; }
+        public ReportEntityType EntityType { get; set; }
         public string ReporterId { get; set; }
+        public User Reporter { get; set; }
         public string Description { get; set; }
-        public ReportType ReportType { get; set; }
+        public string Reason { get; set; }
         public ReportStatus ReportStatus { get; set; } = ReportStatus.Pending;
-        public string Reason { get; set; } = string.Empty;
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
-
-        // Relationship
-        public User? User { get; set; }
     }
 
 }

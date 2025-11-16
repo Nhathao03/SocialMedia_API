@@ -22,9 +22,9 @@ namespace SocialMedia.Core.Services
             _logger = logger;
         }
 
-        public async Task<List<Friends>?> GetFriendRecentlyAddedAsync(string userID)
+        public async Task<List<Friends>?> GetFriendRecentlyAddedAsync(string userId)
         {
-           return await _unitOfWork.FriendRepository.GetFriendRecentlyAddedAsync(userID);
+           return await _unitOfWork.FriendRepository.GetFriendRecentlyAddedAsync(userId);
         }
 
         public async Task<List<Friends>?> GetFriendOfEachUserAsync(string userId)
@@ -41,14 +41,14 @@ namespace SocialMedia.Core.Services
         {
             if(userId == null || targetUserId == null)
             {
-                _logger.LogWarning("Invalid input data");
+                _logger.LogWarning("InvalId input data");
                 throw new ArgumentNullException(nameof(userId), "userId and targetUserId can not empty");
             }
                 
             var request = await _unitOfWork.FriendRequestRepository.GetFriendRequestBetweenUsersAsync(userId, targetUserId);
             if(request == null) 
                 return FriendShipStatus.None;
-            return request.status switch
+            return request.Status switch
             {
                 (int)Constants.FriendRequestStatus.Pending => FriendShipStatus.Pending,
                 (int)Constants.FriendRequestStatus.Accepted => FriendShipStatus.Friends,
@@ -66,7 +66,7 @@ namespace SocialMedia.Core.Services
                 throw new KeyNotFoundException($"Friend request with user {userId} and userB {userB} not exists.");
             }
 
-            existingFriendrequest.status = (int)Constants.FriendRequestStatus.Accepted;
+            existingFriendrequest.Status = (int)Constants.FriendRequestStatus.Accepted;
             await _unitOfWork.FriendRequestRepository.UpdateFriendRequestAsync(existingFriendrequest);
 
             var existingFriend = await _unitOfWork.FriendRepository.GetFriendAsync(userId, userB);
@@ -75,7 +75,7 @@ namespace SocialMedia.Core.Services
                 throw new KeyNotFoundException($"Friend with user {userId} and userB {userB} not exists.");
             }
 
-            var result = await _unitOfWork.FriendRepository.DeleteFriendAsync(existingFriend.ID);
+            var result = await _unitOfWork.FriendRepository.DeleteFriendAsync(existingFriend.Id);
             return result;
         }
     }

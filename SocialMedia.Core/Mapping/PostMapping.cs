@@ -11,14 +11,12 @@ namespace SocialMedia.Core.Mapping
     {
         public PostMapping() 
         {
-            CreateMap<Post, PostDTO>().ReverseMap();
+            CreateMap<Post, CreatePostDTO>().ReverseMap();
             CreateMap<Post, RetrivePostDTO>().ReverseMap();
             CreateMap<PostCategory, PostCategoryDTO>().ReverseMap();
             CreateMap<PostCategory, RetriveCategoryDTO>().ReverseMap();
             CreateMap<Comment, CommentDTO>().ReverseMap();
             CreateMap<Comment, RetriveCommentDTO>().ReverseMap();
-            CreateMap<CommentReplies, CommentRepliesDTO>().ReverseMap();
-            CreateMap<CommentReplies, RetriveCommentRepliesDTO>().ReverseMap();
             CreateMap<PostImage, PostImageDTO>().ReverseMap();
             CreateMap<Like, LikeDTO>().ReverseMap();
         }

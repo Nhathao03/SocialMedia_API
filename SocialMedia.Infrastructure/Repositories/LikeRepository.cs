@@ -16,41 +16,41 @@ namespace SocialMedia.Infrastructure.Repositories
 
         public async Task<Like?> GetLikeAsync(Like like)
         {
-            return await _context.likes
+            return await _context.Likes
                 .FirstOrDefaultAsync(l => l.UserId == like.UserId && l.EntityId == like.EntityId && l.EntityType == like.EntityType);
         }
         public async Task AddReactionAsync(Like like)
         {
-            _context.likes.Add(like);
+            _context.Likes.Add(like);
             await _context.SaveChangesAsync();
         }
 
         public async Task<bool> RemoveReactionAsync(Like like)
         {
-            var existing = await _context.likes
+            var existing = await _context.Likes
            .FirstOrDefaultAsync(l => l.UserId == like.UserId && l.EntityId == like.EntityId && l.EntityType == like.EntityType);
             if (existing == null)
             {
                 return false; // Not found
             }
-            _context.likes.Remove(existing);
+            _context.Likes.Remove(existing);
             await _context.SaveChangesAsync();
             return true; // Removed
         }
 
         public async Task<bool> ToggleReactionAsync(Like like)
         {
-            var existing = await _context.likes
+            var existing = await _context.Likes
             .FirstOrDefaultAsync(l => l.UserId == like.UserId && l.EntityId == like.EntityId && l.EntityType == like.EntityType);
 
             if (existing != null)
             {
-                _context.likes.Remove(existing);
+                _context.Likes.Remove(existing);
                 await _context.SaveChangesAsync();
                 return false; // Unliked
             }
 
-            _context.likes.Add(new Like
+            _context.Likes.Add(new Like
             {
                 UserId = like.UserId,
                 EntityId = like.EntityId,
@@ -62,17 +62,17 @@ namespace SocialMedia.Infrastructure.Repositories
 
         public async Task<int> GetReactionCountAsync(int entityId, EntityTypeEnum entity)
         {
-            return await _context.likes.CountAsync(l => l.EntityId == entityId && l.EntityType == entity);
+            return await _context.Likes.CountAsync(l => l.EntityId == entityId && l.EntityType == entity);
         }
 
         public async Task<bool> HasUserReactionAsync(Like like)
         {
-            return await _context.likes.AnyAsync(l => l.UserId == like.UserId && l.EntityId == like.EntityId && l.EntityType == like.EntityType);
+            return await _context.Likes.AnyAsync(l => l.UserId == like.UserId && l.EntityId == like.EntityId && l.EntityType == like.EntityType);
         }
 
         public async Task<List<string?>> GetUsersReactionAsync(int entityId, EntityTypeEnum entity)
         {
-            return await _context.likes
+            return await _context.Likes
                 .Where(l => l.EntityId == entityId && l.EntityType == entity)
                 .Select(l => l.UserId)
                 .ToListAsync();

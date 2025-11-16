@@ -23,45 +23,45 @@ namespace SocialMedia.Core.Services
             _mapper = mapper;
         }
 
-        public async Task<Post?> GetPostByIdAsync(int id)
+        public async Task<Post?> GetPostByIdAsync(int Id)
         {
-            return await _unitOfWork.PostRepository.GetPostByIdAsync(id);
+            return await _unitOfWork.PostRepository.GetPostByIdAsync(Id);
         }
-        public async Task<RetrivePostDTO?> AddPostAsync(PostDTO dto)
+        public async Task<RetrivePostDTO?> AddPostAsync(CreatePostDTO dto)
         {
-            _logger.LogInformation("Adding a new post for user {UserID}", dto.UserID);
+            _logger.LogInformation("Adding a new post for user {UserId}", dto.UserId);
             if(dto is null)
-                throw new ArgumentNullException(nameof(PostDTO), "Post data is required.");
+                throw new ArgumentNullException(nameof(CreatePostDTO), "Post data is required.");
             var post = _mapper.Map<Post>(dto);
             var result = await _unitOfWork.PostRepository.AddPostAsync(post);
-            _logger.LogInformation("Post added with ID {PostID}", result?.ID);
+            _logger.LogInformation("Post added with Id {PostId}", result?.Id);
             return _mapper.Map<RetrivePostDTO>(result);
         }
 
-        public async Task<RetrivePostDTO?> UpdatePostAsync(int id, PostDTO dto)
+        public async Task<RetrivePostDTO?> UpdatePostAsync(int Id, CreatePostDTO dto)
         {
-            _logger.LogInformation("Updating post with ID {PostID}", id);
-            var existingPost = await _unitOfWork.PostRepository.GetPostByIdAsync(id);
+            _logger.LogInformation("Updating post with Id {PostId}", Id);
+            var existingPost = await _unitOfWork.PostRepository.GetPostByIdAsync(Id);
             if (existingPost is null)
             {
-                throw new KeyNotFoundException($"Post with Id {id} not exits.");
+                throw new KeyNotFoundException($"Post with Id {Id} not exits.");
             }
             var post = _mapper.Map(dto, existingPost);
             var result =  await _unitOfWork.PostRepository.UpdatePostAsync(post);
-            _logger.LogInformation("Post updated with ID {PostID}", result?.ID);
+            _logger.LogInformation("Post updated with Id {PostId}", result?.Id);
             return _mapper.Map<RetrivePostDTO>(result);
         }
 
-        public async Task<bool> DeletePostAsync(int id)
+        public async Task<bool> DeletePostAsync(int Id)
         {
-            _logger.LogInformation("Deleting post with ID {PostID}", id);
-            var existingPost = await _unitOfWork.PostRepository.GetPostByIdAsync(id);   
+            _logger.LogInformation("Deleting post with Id {PostId}", Id);
+            var existingPost = await _unitOfWork.PostRepository.GetPostByIdAsync(Id);   
             if (existingPost is null)
             {
-                throw new KeyNotFoundException($"Post with Id {id} not exits.");
+                throw new KeyNotFoundException($"Post with Id {Id} not exits.");
             }
-            var result = await _unitOfWork.PostRepository.DeletePost(id);
-            _logger.LogInformation("Post deleted with ID {PostID}", id);
+            var result = await _unitOfWork.PostRepository.DeletePost(Id);
+            _logger.LogInformation("Post deleted with Id {PostId}", Id);
             return result;
         }
 

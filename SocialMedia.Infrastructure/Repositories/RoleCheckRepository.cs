@@ -18,61 +18,61 @@ namespace SocialMedia.Infrastructure.Repositories
 
         public async Task<IEnumerable<RoleCheck>> GetAllRoleCheck()
         {
-            return await _context.roleChecks.ToListAsync();
+            return await _context.RoleChecks.ToListAsync();
         }
 
-        public async Task<RoleCheck?> GetRoleCheckById(int id)
+        public async Task<RoleCheck?> GetRoleCheckById(int Id)
         {
-            return await _context.roleChecks.FirstOrDefaultAsync(p => p.Id == id);
+            return await _context.RoleChecks.FirstOrDefaultAsync(p => p.Id == Id);
         }
 
         public async Task AddRoleCheck(RoleCheck roleCheck)
         {
-            _context.roleChecks.AddAsync(roleCheck);
+            _context.RoleChecks.AddAsync(roleCheck);
             await _context.SaveChangesAsync();
         }
 
         public async Task UpdateRoleCheck(RoleCheck roleCheck)
         {
-            _context.roleChecks.Update(roleCheck);
+            _context.RoleChecks.Update(roleCheck);
             await _context.SaveChangesAsync();
         }
 
-        public async Task DeleteRoleCheck(int id)
+        public async Task DeleteRoleCheck(int Id)
         {
-            var roleCheck = await _context.roleChecks.FindAsync(id);
+            var roleCheck = await _context.RoleChecks.FindAsync(Id);
             if (roleCheck != null)
             {
-                _context.roleChecks.Remove(roleCheck);
+                _context.RoleChecks.Remove(roleCheck);
                 await _context.SaveChangesAsync();
             }
         }
 
         public async Task DeleteRoleCheckByUserId(string userId)
         {
-            var user = _context.roleChecks.FirstOrDefault(u => u.UserID == userId);
+            var user = _context.RoleChecks.FirstOrDefault(u => u.UserId == userId);
             if (user != null)
             {
-                _context.roleChecks.Remove(user);
+                _context.RoleChecks.Remove(user);
                 await _context.SaveChangesAsync();
             }
         }
 
         public async Task<bool> IsAdminAsync(string userId)
         {
-            var adminRole = await _context.role
+            var adminRole = await _context.Roles
                 .FirstOrDefaultAsync(r => r.Name.Equals("Admin"));
 
             if (adminRole == null) return false; // No "Admin" role found
 
             // Check if user has any role assigned
-            var userRoleCheck = await _context.roleChecks
-                .FirstOrDefaultAsync(rc => rc.UserID == userId);
+            var userRoleCheck = await _context.RoleChecks
+                .FirstOrDefaultAsync(rc => rc.UserId == userId);
 
-            if (userRoleCheck == null || string.IsNullOrEmpty(userRoleCheck.RoleID))
+            if (userRoleCheck == null || string.IsNullOrEmpty(userRoleCheck.RoleId))
                 return false; // User has no role assigned, or role is NULL
 
-            return userRoleCheck.RoleID == adminRole.Id.ToString();
+            return userRoleCheck.RoleId == adminRole.Id.ToString();
         }
     }
 }

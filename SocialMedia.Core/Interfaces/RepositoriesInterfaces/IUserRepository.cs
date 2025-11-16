@@ -7,9 +7,9 @@ namespace SocialMedia.Infrastructure.Repositories
     public interface IUserRepository
     {
         Task<IEnumerable<User>> GetAllUser();
-        Task<User?> GetUserById(string id);
+        Task<User?> GetUserById(string Id);
         Task<User?> UpdateUser(User user);
-        Task<bool> DeleteUser(string id);
+        Task<bool> DeleteUser(string Id);
         Task<User?> RegisterAccount(User user);
         Task<bool> IsEmailExistsAsync(string email);
         Task<bool> IsPhoneExistsAsync(string phoneNumber);

@@ -29,16 +29,16 @@ namespace SocialMedia.Core.Services
                 throw new ArgumentNullException(nameof(ReportDTO), "Report data is required.");
             var report = _mapper.Map<Report>(dto);
             var result = await _unitOfWork.ReportRepository.AddAsync(report);
-            _logger.LogInformation("Report created with ID {ReportId}", result?.Id);
+            _logger.LogInformation("Report created with Id {ReportId}", result?.Id);
             return _mapper.Map<RetriveReportDTO>(result);
         }
 
-        public async Task<RetriveReportDTO?> GetReportAsync(int id)
+        public async Task<RetriveReportDTO?> GetReportAsync(int Id)
         {
-            if (id <= 0)
-                throw new ArgumentException("Invalid report ID.", nameof(id));
-            var report = await _unitOfWork.ReportRepository.GetByIdAsync(id);
-            _logger.LogInformation("Retrieved report with ID {ReportId}", id);
+            if (Id <= 0)
+                throw new ArgumentException("InvalId report Id.", nameof(Id));
+            var report = await _unitOfWork.ReportRepository.GetByIdAsync(Id);
+            _logger.LogInformation("Retrieved report with Id {ReportId}", Id);
             return _mapper.Map<RetriveReportDTO>(report);
         }
 
@@ -52,49 +52,49 @@ namespace SocialMedia.Core.Services
         public async Task<IEnumerable<RetriveReportDTO?>?> GetReportsByUserIdAsync(string userId)
         {
             if (string.IsNullOrEmpty(userId))
-                throw new ArgumentException("User ID cannot be null or empty.", nameof(userId));
+                throw new ArgumentException("User Id cannot be null or empty.", nameof(userId));
             _logger.LogInformation("Retrieving reports for user {UserId}", userId);
             var reports = await _unitOfWork.ReportRepository.GetByUserIdAsync(userId);
             return _mapper.Map<IEnumerable<RetriveReportDTO>>(reports);
         }
 
-        public async Task<RetriveReportDTO?> UpdateStatusAsync(int id, ReportStatus status)
+        public async Task<RetriveReportDTO?> UpdateStatusAsync(int Id, ReportStatus status)
         {
-            if (id <= 0)
-                throw new ArgumentException("Invalid report ID.", nameof(id));
-            _logger.LogInformation("Updating status of report ID {ReportId} to {Status}", id, status);
-            var report = await _unitOfWork.ReportRepository.GetByIdAsync(id);
+            if (Id <= 0)
+                throw new ArgumentException("InvalId report Id.", nameof(Id));
+            _logger.LogInformation("Updating status of report Id {ReportId} to {Status}", Id, status);
+            var report = await _unitOfWork.ReportRepository.GetByIdAsync(Id);
             if (report == null)
             {
-                _logger.LogWarning("Report with ID {ReportId} not found", id);
+                _logger.LogWarning("Report with Id {ReportId} not found", Id);
                 return null;
             }
             report.ReportStatus = status;
             var updatedReport = await _unitOfWork.ReportRepository.UpdateAsync(report);
-            _logger.LogInformation("Report ID {ReportId} status updated to {Status}", id, status);
+            _logger.LogInformation("Report Id {ReportId} status updated to {Status}", Id, status);
             return _mapper.Map<RetriveReportDTO>(updatedReport);
         }
 
-        public async Task<RetriveReportDTO?> UpdateActionAsync(int id, string actionTaken)
+        public async Task<RetriveReportDTO?> UpdateActionAsync(int Id, string actionTaken)
         {
-            if (id <= 0)
-                throw new ArgumentException("Invalid report ID.", nameof(id));
+            if (Id <= 0)
+                throw new ArgumentException("InvalId report Id.", nameof(Id));
             if (string.IsNullOrEmpty(actionTaken))
                 throw new ArgumentException("Action taken cannot be null or empty.", nameof(actionTaken));
-            _logger.LogInformation("Updating action of report ID {ReportId} to {ActionTaken}", id, actionTaken);
-            var report = await _unitOfWork.ReportRepository.GetByIdAsync(id);
+            _logger.LogInformation("Updating action of report Id {ReportId} to {ActionTaken}", Id, actionTaken);
+            var report = await _unitOfWork.ReportRepository.GetByIdAsync(Id);
             if (report == null)
             {
-                _logger.LogWarning("Report with ID {ReportId} not found", id);
+                _logger.LogWarning("Report with Id {ReportId} not found", Id);
                 return null;
             }
             var notification = new Notification
             {
-                UserId = report.ReporterId,
+                SenderId = report.ReporterId,
                 TargetType = TargetTypeEnum.Report,
                 NotificationType = NotificationTypeEnum.ReportUpdated,
                 TargetId = report.Id,
-                Content = $"Action taken on your report (ID: {report.Id}): {actionTaken}",
+                Content = $"Action taken on your report (Id: {report.Id}): {actionTaken}",
                 IsRead = false,
                 CreatedAt = DateTime.UtcNow
             };
@@ -102,13 +102,13 @@ namespace SocialMedia.Core.Services
             return _mapper.Map<RetriveReportDTO>(report);
         }
 
-        public async Task DeleteAsync(int id)
+        public async Task DeleteAsync(int Id)
         {
-            if (id <= 0)
-                throw new ArgumentException("Invalid report ID.", nameof(id));
-            _logger.LogInformation("Deleting report with ID {ReportId}", id);
-            await _unitOfWork.ReportRepository.DeleteAsync(id);
-            _logger.LogInformation("Report with ID {ReportId} deleted", id);
+            if (Id <= 0)
+                throw new ArgumentException("InvalId report Id.", nameof(Id));
+            _logger.LogInformation("Deleting report with Id {ReportId}", Id);
+            await _unitOfWork.ReportRepository.DeleteAsync(Id);
+            _logger.LogInformation("Report with Id {ReportId} deleted", Id);
         }
     }
 }

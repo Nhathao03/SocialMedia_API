@@ -17,39 +17,39 @@ namespace SocialMedia.Infrastructure.Repositories
 
         public async Task<Report?> AddAsync(Report model)
         {
-            _context.reports.AddAsync(model);
+            _context.Reports.AddAsync(model);
             await _context.SaveChangesAsync();
             return model;
         }
 
         public async Task<IEnumerable<Report?>?> GetAllAsync()
         {
-            return await _context.reports.ToListAsync();
+            return await _context.Reports.ToListAsync();
         }
 
-        public async Task<Report?> GetByIdAsync(int id)
+        public async Task<Report?> GetByIdAsync(int Id)
         {
-            return await _context.reports.FirstOrDefaultAsync(r => r.Id == id);
+            return await _context.Reports.FirstOrDefaultAsync(r => r.Id == Id);
         }
 
         public async Task<IEnumerable<Report?>?> GetByUserIdAsync(string userId)
         {
-            return await _context.reports.Where(r => r.ReporterId == userId).ToListAsync();
+            return await _context.Reports.Where(r => r.ReporterId == userId).ToListAsync();
         }
 
-        public async Task DeleteAsync(int id)
+        public async Task DeleteAsync(int Id)
         {
-            var report = await _context.reports.FindAsync(id);
+            var report = await _context.Reports.FindAsync(Id);
             if (report != null)
             {
-                _context.reports.Remove(report);
+                _context.Reports.Remove(report);
                 await _context.SaveChangesAsync();
             }
         }
 
         public async Task<Report?> UpdateAsync(Report model)
         {
-            _context.reports.Update(model);
+            _context.Reports.Update(model);
             await _context.SaveChangesAsync();
             return model;
         }

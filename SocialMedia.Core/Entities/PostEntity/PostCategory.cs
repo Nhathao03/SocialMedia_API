@@ -5,9 +5,8 @@ namespace SocialMedia.Core.Entities.PostEntity
     public class PostCategory
     {
         [Key]
-        public int ID { get; set; }
-        [Required]
+        public int Id { get; set; }
         public string Name { get; set; }
-
+        public ICollection<Post> Posts { get; set; } = new List<Post>();
     }
 }

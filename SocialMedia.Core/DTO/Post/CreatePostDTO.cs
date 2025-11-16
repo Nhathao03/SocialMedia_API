@@ -4,15 +4,14 @@ using SocialMedia.Core.Entities.DTO.Comment;
 
 namespace SocialMedia.Core.DTO.Post
 {
-    public class PostDTO
+    public class CreatePostDTO
     {
-        public string? UserID { get; set; }
+        public string? UserId { get; set; }
         public string? Content { get; set; }
         public int? Views { get; set; }
         public int? Share { get; set; } = 0;
-        public int PostCategoryID { get; set; }
+        public int PostCategoryId { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
-        public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
         public List<PostImageDTO>? PostImages { get; set; }
     }
 

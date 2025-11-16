@@ -197,15 +197,15 @@ namespace Social_Media.Controllers
         /// <response code="400">If request null</response>
         /// <response code="401">If user is not logged in</response>
         [HttpPost("reset-password")]
-        [SwaggerOperation(Summary = "Reset password", Description = "Resets the user's password using the provided OTP.")]
+        [SwaggerOperation(Summary = "Reset password", Description = "Resets the user's password using the provIded OTP.")]
         public async Task<IActionResult> ResetPasswordAsync([FromBody] ResetPasswordDTO dto)
         {
 
             var (otp, expiry) = _otpStore[dto.Email];
 
-            // Check if OTP is valid and not expired
+            // Check if OTP is valId and not expired
             if (otp != dto.Otp || DateTime.UtcNow > expiry)
-                return ApiResponseHelper.BadRequest("Invalid or expired OTP");
+                return ApiResponseHelper.BadRequest("InvalId or expired OTP");
 
             if (dto.NewPassword != dto.ConfirmPassword)
                 return ApiResponseHelper.BadRequest("New password and confirm password do not match");
@@ -214,7 +214,7 @@ namespace Social_Media.Controllers
             if (user == null) return BadRequest("User not exist");
 
             // Hash new password by BCrypt
-            user.Password = BCrypt.Net.BCrypt.HashPassword(dto.NewPassword);
+            user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(dto.NewPassword);
             await _userService.UpdateUserAsync(user);
 
             // Delete OTP after successful reset

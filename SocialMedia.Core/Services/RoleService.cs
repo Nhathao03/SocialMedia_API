@@ -1,39 +1,48 @@
-﻿using SocialMedia.Infrastructure.Repositories;
+﻿using AutoMapper;
+using SocialMedia.Core.DTO.Post;
+using SocialMedia.Core.DTO.Role;
 using SocialMedia.Core.Entities.DTO;
 using SocialMedia.Core.Entities.DTO.Role;
 using SocialMedia.Core.Entities.RoleEntity;
+using SocialMedia.Core.Interfaces.ServiceInterfaces;
+using SocialMedia.Infrastructure.Repositories;
 
 namespace SocialMedia.Core.Services
 {
     public class RoleService : IRoleService
     {
-        private readonly IRoleRepository _roleRepository;
-
-        public RoleService(IRoleRepository repository)
+        private readonly IUnitOfWork _unitOfWork;
+        private readonly IMapper _mapper;
+       
+        public RoleService(IUnitOfWork unitOfWork,
+            IMapper mapper)
         {
-            _roleRepository = repository;
+            _mapper = mapper;
+            _unitOfWork = unitOfWork;
+		}
+
+        public async Task<IEnumerable<Role?>?> GetAllRoleAsync()
+        {
+            return await _unitOfWork.RoleRepository.GetAllRole();
         }
 
-        public async Task<IEnumerable<Role>> GetAllRoleAsync()
+        public async Task<Role?> GetRoleByIdAsync(string Id)
         {
-            return await _roleRepository.GetAllRole();
+            return await _unitOfWork.RoleRepository.GetRoleById(Id);
         }
 
-        public async Task<Role> GetRoleByIdAsync(string id)
+        public async Task<RetriveRoleDTO?> AddRoleAsync(RoleDTO dto)
         {
-            return await _roleRepository.GetRoleById(id);
-        }
-
-        public async Task AddRoleAsync(string RoleName)
-        {
-            var modelData = new Role
-            {
-                // call to function generate roleId to create new roleId
-                Id = GenerateRoleId(),
-                Name = RoleName
-            };
-            await _roleRepository.AddRole(modelData);
-        }
+			if (dto is null)
+				throw new ArgumentNullException(nameof(RoleDTO), "Role data is required.");
+			if (string.IsNullOrWhiteSpace(dto.Name))
+				throw new ArgumentException("Role name cannot be empty.", nameof(dto.Name));
+			var role = _mapper.Map<Role>(dto);
+            role.Id = GenerateRoleId();
+			var result = await _unitOfWork.RoleRepository.AddRole(role);
+			var mapper = _mapper.Map<RetriveRoleDTO>(result);
+            return mapper;
+		}
 
         // Generate roleId 
         private string GenerateRoleId()
@@ -44,26 +53,33 @@ namespace SocialMedia.Core.Services
                              .Select(s => s[random.Next(s.Length)]).ToArray());
         }
 
-        public async Task UpdateRoleAsync(RoleDTO modelDTO)
+        public async Task<RetriveRoleDTO?> UpdateRoleAsync(string Id, RoleDTO dto)
         {
-            var existingRole = await _roleRepository.GetRoleById(modelDTO.Id);
+            var existingRole = await _unitOfWork.RoleRepository.GetRoleById(Id);
             if(existingRole == null)
             {
-                throw new KeyNotFoundException($"Role with Id {modelDTO.Id} not exits.");
+                throw new KeyNotFoundException($"Role with Id {Id} not exits.");
             }
 
-            existingRole.Name = modelDTO.Name;
+            var role = _mapper.Map(dto, existingRole);
+			await _unitOfWork.RoleRepository.UpdateRole(existingRole);
+            return _mapper.Map<RetriveRoleDTO>(role);
+		}
 
-            await _roleRepository.UpdateRole(existingRole);
-        }
+        public async Task<bool> DeleteRoleAsync(string Id)
+        {
+            var exitsAddress = await _unitOfWork.RoleRepository.GetRoleById(Id);
+			if (exitsAddress is null)
+			{
+				throw new KeyNotFoundException($"Role with Id {Id} not exits.");
+			}
 
-        public async Task DeleteRoleAsync(int id)
+			var result = await _unitOfWork.RoleRepository.DeleteRole(Id);
+			return result;
+		}
+        public async Task<string?> GetRoleIdUserAsync()
         {
-            await _roleRepository.DeleteRole(id);
-        }
-        public async Task<string> GetRoleIdUserAsync()
-        {
-            return await _roleRepository.GetRoleIdUser();
+            return await _unitOfWork.RoleRepository.GetRoleIdUser();
         }
     }
 }

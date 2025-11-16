@@ -15,31 +15,31 @@ namespace SocialMedia.Infrastructure.Repositories
             _context = context;
         }
 
-        public async Task<IEnumerable<Notification>?> GetByUserIdAsync(string userId)
+        public async Task<IEnumerable<Notification>?> GetByUserIdAsync(string senderId)
         {
-            return await _context.notifications.Where(n => n.UserId == userId).ToListAsync();
+            return await _context.Notifications.Where(n => n.SenderId == senderId).ToListAsync();
         }
 
-        public async Task<IEnumerable<Notification>?> GetUnreadByUserIdAsync(string userId)
+        public async Task<IEnumerable<Notification>?> GetUnreadByUserIdAsync(string SenderId)
         {
-            return await _context.notifications.Where(n => n.UserId == userId && n.IsRead == false).ToListAsync();
+            return await _context.Notifications.Where(n => n.SenderId == SenderId && n.IsRead == false).ToListAsync();
         }
 
-        public async Task<Notification?> GetByIdAsync(int id)
+        public async Task<Notification?> GetByIdAsync(int Id)
         {
-            return await _context.notifications.FirstOrDefaultAsync(n => n.Id == id);
+            return await _context.Notifications.FirstOrDefaultAsync(n => n.Id == Id);
         }
 
         public async Task<Notification?> AddNotificationAsync(Notification notification)
         {
-            _context.notifications.Add(notification);
+            _context.Notifications.Add(notification);
             await _context.SaveChangesAsync();
             return notification;
         }
         
-        public async Task MarkAsReadAsync(int id)
+        public async Task MarkAsReadAsync(int Id)
         {
-            var notification = await _context.notifications.FindAsync(id);
+            var notification = await _context.Notifications.FindAsync(Id);
             if (notification != null)
             {
                 notification.IsRead = true;
@@ -47,10 +47,10 @@ namespace SocialMedia.Infrastructure.Repositories
             }
         }
 
-        public async Task MarkAllAsReadAsync(string userId)
+        public async Task MarkAllAsReadAsync(string SenderId)
         {
-            var list = await _context.notifications
-                .Where(n => n.UserId == userId && !n.IsRead)
+            var list = await _context.Notifications
+				.Where(n => n.SenderId == SenderId && !n.IsRead)
                 .ToListAsync();
             foreach (var item in list)
             {

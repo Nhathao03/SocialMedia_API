@@ -18,9 +18,9 @@ namespace SocialMedia.Core.Services
             return await _userLoginRepository.GetAllUserLogin();
         }
 
-        public async Task<UserLogins> GetUserLoginByIdAsync(int id)
+        public async Task<UserLogins> GetUserLoginByIdAsync(int Id)
         {
-            return await _userLoginRepository.GetUserLoginById(id);
+            return await _userLoginRepository.GetUserLoginById(Id);
         }
 
         public async Task AddUserLoginsAsync(UserLogins userLogins)
@@ -32,9 +32,9 @@ namespace SocialMedia.Core.Services
             await _userLoginRepository.UpdateUserLogin(userLogins);
         }
 
-        public async Task DeleteUserLoginAsync(int id)
+        public async Task DeleteUserLoginAsync(int Id)
         {
-            await _userLoginRepository.DeleteUserLogin(id);
+            await _userLoginRepository.DeleteUserLogin(Id);
         }
     }
 }

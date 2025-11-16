@@ -41,9 +41,9 @@ namespace SocialMedia.Core.Services
             return await _unitOfWork.UserRepository.GetAllUser();
         }
 
-        public async Task<User?> GetUserByIdAsync(string id)
+        public async Task<User?> GetUserByIdAsync(string Id)
         {
-            return await _unitOfWork.UserRepository.GetUserById(id);
+            return await _unitOfWork.UserRepository.GetUserById(Id);
         }
 
         public async Task<User?> GetUserByEmailAsync(string email)
@@ -61,22 +61,22 @@ namespace SocialMedia.Core.Services
             var user = await _unitOfWork.UserRepository.GetUserById(userId);
             if(user is null)
             {
-                _logger.LogInformation("Delete failed: User with ID {UserId} not found.", userId);
+                _logger.LogInformation("Delete failed: User with Id {UserId} not found.", userId);
                 return false;
             }
 
             var result = await _unitOfWork.UserRepository.DeleteUser(userId);
             if (!result)
-                _logger.LogInformation("Delete failed: Error deleting user with ID {UserId}.", userId);
+                _logger.LogInformation("Delete failed: Error deleting user with Id {UserId}.", userId);
             else
-                _logger.LogInformation("User with ID {UserId} deleted successfully.", userId);
+                _logger.LogInformation("User with Id {UserId} deleted successfully.", userId);
 
             await _unitOfWork.RoleCheckRepository.DeleteRoleCheckByUserId(userId);
             return true;
         }
 
-        //Generate userID
-        private string GenerateUserID()
+        //Generate userId
+        private string GenerateUserId()
         {
             const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
             return new string(Enumerable.Repeat(chars, 20)
@@ -111,13 +111,13 @@ namespace SocialMedia.Core.Services
 
             var user = new User
             {
-                Id = GenerateUserID(),
+                Id = GenerateUserId(),
                 Email = model.Email,
-                Password = BCrypt.Net.BCrypt.HashPassword(model.Password),
+                PasswordHash = BCrypt.Net.BCrypt.HashPassword(model.Password),
                 PhoneNumber = model.PhoneNumber,
                 Fullname = model.FullName,
                 Birth = model.Birth,
-                gender = null,
+                Gender = null,
                 Avatar = "user/avatar/avatar_user.png",
                 BackgroundProfile = "user/background/1.jpg",
                 NormalizeEmail = NormalizeString(model.Email),
@@ -135,12 +135,12 @@ namespace SocialMedia.Core.Services
                 };
             }
 
-            //Get id role user
+            //Get Id role user
             var roleId = await _unitOfWork.RoleRepository.GetRoleIdUser();
             var roleUser = new RoleCheck
             {
-                UserID = user.Id,
-                RoleID = roleId,
+                UserId = user.Id,
+                RoleId = roleId,
             };
             await _unitOfWork.RoleCheckRepository.AddRoleCheck(roleUser);
 
@@ -159,18 +159,18 @@ namespace SocialMedia.Core.Services
                 return new AuthResultDTO
                 {
                     Success = false,
-                    Errors = new[] { "Invalid credentials." }
+                    Errors = new[] { "InvalId credentials." }
                 };
             }
 
             var result = await _unitOfWork.UserRepository.CheckPasswordSignInAsync(model, model.Password);
             if (!result)
             {
-                _logger.LogWarning("Login failed for email: {Email} due to invalid password.", model.Email);
+                _logger.LogWarning("Login failed for email: {Email} due to invalId password.", model.Email);
                 return new AuthResultDTO
                 {
                     Success = false,
-                    Errors = new[] { "Invalid credentials." }
+                    Errors = new[] { "InvalId credentials." }
                 };
             }
 
@@ -193,7 +193,7 @@ namespace SocialMedia.Core.Services
         //Generate JWT Token
         public async Task<string> GenerateAccessTokenAsync(string userId)
         {
-            _logger.LogInformation("Generating access token for user ID: {UserId}", userId);
+            _logger.LogInformation("Generating access token for user Id: {UserId}", userId);
 
             var jwtSettings = _config.GetSection("Jwt");
             SymmetricSecurityKey securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings["Key"]));
@@ -226,14 +226,14 @@ namespace SocialMedia.Core.Services
             );
             JwtSecurityTokenHandler tokenHandler = new JwtSecurityTokenHandler();
             var token = tokenHandler.WriteToken(tokenGenerator);
-            _logger.LogInformation("Access token generated for user ID: {UserId}", userId);
+            _logger.LogInformation("Access token generated for user Id: {UserId}", userId);
             return token;
         }
 
         // Generate refresh token
         public async Task<string> GenerateRefreshTokenAsync(User user)
         {
-            _logger.LogInformation("Generating refresh token for user ID: {UserId}", user.Id);
+            _logger.LogInformation("Generating refresh token for user Id: {UserId}", user.Id);
             var randomNumber = new byte[64];
             using var rng = RandomNumberGenerator.Create();
             rng.GetBytes(randomNumber);
@@ -253,7 +253,7 @@ namespace SocialMedia.Core.Services
         {
             var user = _unitOfWork.UserRepository.GetUserByRefreshToken(refreshToken);
             if(user == null)
-                _logger.LogWarning("No user found for the provided refresh token.");
+                _logger.LogWarning("No user found for the provIded refresh token.");
             return user;
         }
 
@@ -279,105 +279,105 @@ namespace SocialMedia.Core.Services
         //Get profile user async
         public async Task<ProfileDTO?> GetProfileAsync(string userId)
         {
-            _logger.LogInformation("Retrieving profile for user ID: {UserId}", userId);
+            _logger.LogInformation("Retrieving profile for user Id: {UserId}", userId);
             var user = await _unitOfWork.UserRepository.GetUserById(userId);
             if (user is null)
             {
-                _logger.LogInformation("User with ID {UserId} not found.", userId);
+                _logger.LogInformation("User with Id {UserId} not found.", userId);
                 return null;
             }
 
             var profile = _mapper.Map<ProfileDTO>(user);
-            _logger.LogInformation("Profile retrieved successfully for user ID: {UserId}", userId);
+            _logger.LogInformation("Profile retrieved successfully for user Id: {UserId}", userId);
             return profile;
         }
         //Update information user async
         public async Task<ProfileDTO?> UpdateProfileAsync (string userId, UpdateProfileDTO profileDto)
         {
-            _logger.LogInformation("Updating profile for user ID: {UserId}", userId);
+            _logger.LogInformation("Updating profile for user Id: {UserId}", userId);
             var user = await _unitOfWork.UserRepository.GetUserById(userId);
             if (user is null)
             {
-                _logger.LogInformation("Update failed: User with ID {UserId} not found.", userId);
+                _logger.LogInformation("Update failed: User with Id {UserId} not found.", userId);
                 return null;
             }
 
             user.Fullname = profileDto.fullname ?? user.Fullname;
             user.Birth = profileDto.Birth ?? user.Birth;
-            user.addressID = profileDto.addressID ?? user.addressID;
-            user.gender = profileDto.gender ?? user.gender;
+            user.AddressId = profileDto.addressId ?? user.AddressId;
+            user.Gender = profileDto.gender ?? user.Gender;
             user.Avatar = profileDto.avatar ?? user.Avatar;
 
             var result =  await _unitOfWork.UserRepository.UpdateUser(user);
             if (result is null)
             {
-                _logger.LogInformation("Update failed: Error updating user with ID {UserId}.", userId);
+                _logger.LogInformation("Update failed: Error updating user with Id {UserId}.", userId);
                 return null;
             }
 
             var profile = _mapper.Map<ProfileDTO>(user);
 
-            _logger.LogInformation("Profile updated successfully for user ID: {UserId}", userId);
+            _logger.LogInformation("Profile updated successfully for user Id: {UserId}", userId);
             return profile;
         }
 
         //Change Password
         public async Task<bool> ChangePasswordAsync(string userId, ChangePasswordDTO dto)
         {
-            _logger.LogInformation("Changing password for user ID: {UserId}", userId);
+            _logger.LogInformation("Changing password for user Id: {UserId}", userId);
 
             var user = await _unitOfWork.UserRepository.GetUserById(userId);
             if (user is null)
             {
-                _logger.LogInformation("Change password failed: User with ID {UserId} not found.", userId);
+                _logger.LogInformation("Change password failed: User with Id {UserId} not found.", userId);
                 return false;
             }
 
-            bool isPasswordValid = BCrypt.Net.BCrypt.Verify(dto.currentPass, user.Password);
-            if (isPasswordValid)
+            bool isPasswordValId = BCrypt.Net.BCrypt.Verify(dto.currentPass, user.PasswordHash);
+            if (isPasswordValId)
             {
                 string newPass = BCrypt.Net.BCrypt.HashPassword(dto.newPass);
-                user.Password = newPass;
+                user.PasswordHash = newPass;
                 var result = await _unitOfWork.UserRepository.UpdateUser(user);
                 if (result is null)
                 {
-                    _logger.LogInformation("Change password failed: Error updating password for user ID {UserId}.", userId);
+                    _logger.LogInformation("Change password failed: Error updating password for user Id {UserId}.", userId);
                     return false;
                 }
             }
-            _logger.LogInformation("Password changed successfully for user ID: {UserId}", userId);
+            _logger.LogInformation("Password changed successfully for user Id: {UserId}", userId);
             return true;
         }
 
         public async Task<ProfileDTO?> ManageContact (string userId, UpdateContactDTO manageContactDTO)
         {
-            _logger.LogInformation("Managing contact for user ID: {UserId}", userId);
+            _logger.LogInformation("Managing contact for user Id: {UserId}", userId);
             var user = await _unitOfWork.UserRepository.GetUserById(userId);
             if(user is null)
             {
-                _logger.LogInformation("Manage contact failed: User with ID {UserId} not found.", userId);
+                _logger.LogInformation("Manage contact failed: User with Id {UserId} not found.", userId);
                 return null;
             }
 
             user.PhoneNumber = manageContactDTO.phoneNumber;
             var result = await _unitOfWork.UserRepository.UpdateUser(user);
-            _logger.LogInformation("Contact updated successfully for user ID: {UserId}", userId);
+            _logger.LogInformation("Contact updated successfully for user Id: {UserId}", userId);
             return _mapper.Map<ProfileDTO?>(result);
         }
         
         public async Task<ProfileDTO?> UploadBackgroundUser(string userId, UpdateBackgroundDTO backgroundDTO)
         {
-            _logger.LogInformation("Uploading background for user ID: {UserId}", userId);
+            _logger.LogInformation("Uploading background for user Id: {UserId}", userId);
             var user = await _unitOfWork.UserRepository.GetUserById(userId);
             if (user is null ) {
-                _logger.LogInformation("Upload background failed: User with ID {UserId} not found.", userId);
+                _logger.LogInformation("Upload background failed: User with Id {UserId} not found.", userId);
                 return null;
             }
 
             user.BackgroundProfile = backgroundDTO.backgroundImage;
             await _unitOfWork.UserRepository.UpdateUser(user);
             
-            _logger.LogInformation("Background updated successfully for user ID: {UserId}", userId);
+            _logger.LogInformation("Background updated successfully for user Id: {UserId}", userId);
             return _mapper.Map<ProfileDTO>(user);
         }
 

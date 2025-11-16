@@ -15,13 +15,11 @@ namespace SocialMedia.Core.Entities.PostEntity
         [Key]
         public int Id { get; set; }
         public int EntityId { get; set; }
-        public string? UserId { get; set; }
+        public string UserId { get; set; }
+        public User User { get; set; }
         public LikeTypeEnum LikeType { get; set; }
         public EntityTypeEnum EntityType { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
-
-        // Navigation properties
-        public User? user { get; set; }
     }
 
     public enum LikeTypeEnum

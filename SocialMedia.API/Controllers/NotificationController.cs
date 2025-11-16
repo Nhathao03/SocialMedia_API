@@ -69,20 +69,20 @@ namespace Social_Media.Controllers
         /// Mark a notification as read
         /// </summary>
         /// <response code="200">Mark as read successfully.</response>
-        /// <response code="400">Invalid input data</response>
-        [HttpPut("read/{id:int}")]
+        /// <response code="400">InvalId input data</response>
+        [HttpPut("read/{Id:int}")]
         [SwaggerOperation(Summary = "Mark a notification as read")]
-        public async Task<IActionResult> MarkAsRead(int id)
+        public async Task<IActionResult> MarkAsRead(int Id)
         {
-            if (id <= 0) return ApiResponseHelper.BadRequest("Invalid input data");
+            if (Id <= 0) return ApiResponseHelper.BadRequest("InvalId input data");
             try
             {
-                await _notificationService.MarkAsReadAsync(id);
+                await _notificationService.MarkAsReadAsync(Id);
                 return ApiResponseHelper.Success("Notification marked as read.");
             }
-            catch (KeyNotFoundException ex)
+            catch (Exception ex)
             {
-                return ApiResponseHelper.BadRequest(ex.Message);
+                return StatusCode(500, $"Error: {ex.InnerException?.Message}");
             }
         }
 
@@ -102,7 +102,7 @@ namespace Social_Media.Controllers
             }
             catch (Exception ex)
             {
-                return ApiResponseHelper.InternalServerError(ex.Message);
+                return StatusCode(500, $"Error: {ex.InnerException?.Message}");
             }
         }
 
@@ -125,7 +125,7 @@ namespace Social_Media.Controllers
             }
             catch (Exception ex)
             {
-                return ApiResponseHelper.InternalServerError(ex.Message);
+                return StatusCode(500, $"Error: {ex.InnerException?.Message}");
             }    
         }
 
@@ -135,12 +135,12 @@ namespace Social_Media.Controllers
         /// <param name="dto">Notification creation data including receiver, message, and type.</param>
         /// <returns>Returns the created notification information.</returns>
         /// <response code="200">Notification created successfully.</response>
-        /// <response code="400">Invalid input data.</response>
-        /// <response code="401">Unauthorized — JWT token is missing or invalid.</response>
+        /// <response code="400">InvalId input data.</response>
+        /// <response code="401">Unauthorized — JWT token is missing or invalId.</response>
         [HttpPost]
         [SwaggerOperation(
             Summary = "Create a new notification manually",
-            Description = "Allows a logged-in user (identified by JWT) to create a new notification for a specific receiver. " +
+            Description = "Allows a logged-in user (Identified by JWT) to create a new notification for a specific receiver. " +
                           "Normally used for testing or admin purposes.")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -157,7 +157,7 @@ namespace Social_Media.Controllers
                 var result = await _notificationService.CreateNotificationAsync(dto);
                 try
                 { 
-                    await _hubContext.Clients.User(dto.UserId).SendAsync("ReceiveNotification", result);
+                    await _hubContext.Clients.User(dto.SenderId).SendAsync("ReceiveNotification", result);
                 }
                 catch(Exception ex)
                 {
@@ -167,7 +167,7 @@ namespace Social_Media.Controllers
             }
             catch (Exception ex)
             {
-                return ApiResponseHelper.InternalServerError($"An error occurred while creating the notification: {ex.InnerException?.Message}");
+                return StatusCode(500, $"Error: {ex.InnerException?.Message}");
             }
         }
 

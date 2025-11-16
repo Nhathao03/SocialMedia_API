@@ -20,32 +20,32 @@ namespace SocialMedia.Infrastructure.Repositories
             _context = context;
         }
 
-        public async Task<Post?> GetPostByIdAsync(int id)
+        public async Task<Post?> GetPostByIdAsync(int Id)
         {
-            return await _context.posts
+            return await _context.Posts
                 .Include(p => p.PostCategory)
                 .Include(p => p.PostImages)
-                .FirstOrDefaultAsync(p => p.ID == id);
+                .FirstOrDefaultAsync(p => p.Id == Id);
         }
 
         public async Task<Post?> AddPostAsync(Post post)
         {
-            _context.posts.Add(post);
+            _context.Posts.Add(post);
             await _context.SaveChangesAsync();
             return post;
         }
         public async Task<Post?> UpdatePostAsync(Post post)
         {
-            _context.posts.Update(post);
+            _context.Posts.Update(post);
             await _context.SaveChangesAsync();
             return post;
         }
-        public async Task<bool> DeletePost(int id)
+        public async Task<bool> DeletePost(int Id)
         {
-            var post = await _context.posts.FindAsync(id);
+            var post = await _context.Posts.FindAsync(Id);
             if (post is null)
                 return false;
-            _context.posts.Remove(post);
+            _context.Posts.Remove(post);
             await _context.SaveChangesAsync();
             return true;
         }
@@ -53,15 +53,15 @@ namespace SocialMedia.Infrastructure.Repositories
         //public async Task<IEnumerable<RetrivePostDTO>?> GetPostsByUserIdAsync(string userId)
         //{
         //    var posts = await _context.posts
-        //        .Where(p => p.UserID == userId)
+        //        .Where(p => p.UserId == userId)
         //        .Include(p => p.PostCategory)
         //        .Include(p => p.user)
         //        .Include(p => p.PostImages)
         //        .Include(p => p.Comments)
         //        .Select(p => new RetrivePostDTO
         //        {
-        //            Id = p.ID,
-        //            UserID = p.UserID,
+        //            Id = p.Id,
+        //            UserId = p.UserId,
         //            Content = p.Content,
         //            Views = p.Views,
         //            Share = p.Share,
@@ -85,7 +85,7 @@ namespace SocialMedia.Infrastructure.Repositories
         //            // Post images
         //            PostImages = p.PostImages.Select(pi => new PostImage
         //            {
-        //                ID = pi.ID,
+        //                Id = pi.Id,
         //                PostId = pi.PostId,
         //                Url = pi.Url
         //            }).ToList(),
@@ -93,7 +93,7 @@ namespace SocialMedia.Infrastructure.Repositories
         //            // Comments 
         //            Comments = p.Comments.Select(c => new Comment
         //            {
-        //                ID = c.ID,
+        //                Id = c.Id,
         //                UserId = c.UserId,
         //                PostId = c.PostId,
         //                Content = c.Content,
@@ -102,7 +102,7 @@ namespace SocialMedia.Infrastructure.Repositories
 
         //                // Comment Replies
         //                CommentReplies = _context.commentReplies
-        //                    .Where(crp => crp.CommentId == c.ID)
+        //                    .Where(crp => crp.CommentId == c.Id)
         //                    .Select(crp => new CommentReplies
         //                    {
         //                        Id = crp.Id,
@@ -117,7 +117,7 @@ namespace SocialMedia.Infrastructure.Repositories
 
         //            // Likes 
         //            Likes = _context.likes
-        //                .Where(l => l.EntityId == p.ID)
+        //                .Where(l => l.EntityId == p.Id)
         //                .Select(l => new Like
         //                {
         //                    Id = l.Id,
@@ -132,15 +132,15 @@ namespace SocialMedia.Infrastructure.Repositories
         //public async Task<IEnumerable<RetrivePostDTO>?> GetPostsByUserIdAsync(string userId)
         //{
         //    var posts = await _context.posts
-        //        .Where(p => p.UserID == userId)
+        //        .Where(p => p.UserId == userId)
         //        .Include(p => p.PostCategory)
         //        .Include(p => p.user)
         //        .Include(p => p.PostImages)
         //        .Include(p => p.Comments)
         //        .Select(p => new RetrivePostDTO
         //        {
-        //            Id = p.ID,
-        //            UserID = p.UserID,
+        //            Id = p.Id,
+        //            UserId = p.UserId,
         //            Content = p.Content,
         //            Views = p.Views,
         //            Share = p.Share,
@@ -164,7 +164,7 @@ namespace SocialMedia.Infrastructure.Repositories
         //            // Post images
         //            PostImages = p.PostImages.Select(pi => new PostImage
         //            {
-        //                ID = pi.ID,
+        //                Id = pi.Id,
         //                PostId = pi.PostId,
         //                Url = pi.Url
         //            }).ToList(),
@@ -172,7 +172,7 @@ namespace SocialMedia.Infrastructure.Repositories
         //            // Comments 
         //            Comments = p.Comments.Select(c => new Comment
         //            {
-        //                ID = c.ID,
+        //                Id = c.Id,
         //                UserId = c.UserId,
         //                PostId = c.PostId,
         //                Content = c.Content,
@@ -181,7 +181,7 @@ namespace SocialMedia.Infrastructure.Repositories
 
         //                // Comment Replies
         //                CommentReplies = _context.commentReplies
-        //                    .Where(crp => crp.CommentId == c.ID)
+        //                    .Where(crp => crp.CommentId == c.Id)
         //                    .Select(crp => new CommentReplies
         //                    {
         //                        Id = crp.Id,
@@ -196,7 +196,7 @@ namespace SocialMedia.Infrastructure.Repositories
 
         //            // Likes 
         //            Likes = _context.likes
-        //                .Where(l => l.EntityId == p.ID)
+        //                .Where(l => l.EntityId == p.Id)
         //                .Select(l => new Like
         //                {
         //                    Id = l.Id,
@@ -211,7 +211,7 @@ namespace SocialMedia.Infrastructure.Repositories
 
         public async Task<IEnumerable<Post>?> GetRecentPostsAsync(int page, int pageSize)
         {
-            return await _context.posts
+            return await _context.Posts
                 .Include(p => p.PostCategory)
                 .Include(p => p.PostImages)
                 .OrderByDescending(p => p.CreatedAt)

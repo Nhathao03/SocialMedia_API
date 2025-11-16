@@ -27,8 +27,8 @@ namespace SocialMedia.Core.Services
         {
             if (string.IsNullOrWhiteSpace(dto.UserId) || dto.EntityId <= 0)
             {
-                _logger.LogWarning("Invalid input data");
-                throw new ArgumentException("Invalid input data");
+                _logger.LogWarning("InvalId input data");
+                throw new ArgumentException("InvalId input data");
             }
             var like = _mapper.Map<Like>(dto);
             await _unitOfWork.LikePostRepository.AddReactionAsync(like);
@@ -38,8 +38,8 @@ namespace SocialMedia.Core.Services
         {
             if (string.IsNullOrWhiteSpace(dto.UserId) || dto.EntityId <= 0)
             {
-                _logger.LogWarning("Invalid input data");
-                throw new ArgumentException("Invalid input data");
+                _logger.LogWarning("InvalId input data");
+                throw new ArgumentException("InvalId input data");
             }
             var like = _mapper.Map<Like>(dto);
             return await _unitOfWork.LikePostRepository.RemoveReactionAsync(like);
@@ -49,8 +49,8 @@ namespace SocialMedia.Core.Services
         {
             if (string.IsNullOrWhiteSpace(dto.UserId) || dto.EntityId <= 0)
             {
-                _logger.LogWarning("Invalid input data");
-                throw new ArgumentException("Invalid input data");
+                _logger.LogWarning("InvalId input data");
+                throw new ArgumentException("InvalId input data");
             }
             var like = _mapper.Map<Like>(dto);
             return await _unitOfWork.LikePostRepository.ToggleReactionAsync(like);
@@ -60,8 +60,8 @@ namespace SocialMedia.Core.Services
         {
             if (entityId <= 0)
             {
-                _logger.LogWarning("Invalid input data");
-                throw new ArgumentException("Invalid input data");
+                _logger.LogWarning("InvalId input data");
+                throw new ArgumentException("InvalId input data");
             }
             return await _unitOfWork.LikePostRepository.GetReactionCountAsync(entityId, entity);
         }
@@ -70,8 +70,8 @@ namespace SocialMedia.Core.Services
         {
             if (string.IsNullOrWhiteSpace(dto.UserId) || dto.EntityId <= 0)
             {
-                _logger.LogWarning("Invalid input data");
-                throw new ArgumentException("Invalid input data");
+                _logger.LogWarning("InvalId input data");
+                throw new ArgumentException("InvalId input data");
             }
             var like = _mapper.Map<Like>(dto);
             return await _unitOfWork.LikePostRepository.HasUserReactionAsync(like);
@@ -81,8 +81,8 @@ namespace SocialMedia.Core.Services
         {
             if (entityId <= 0)
             {
-                _logger.LogWarning("Invalid input data");
-                throw new ArgumentException("Invalid input data");
+                _logger.LogWarning("InvalId input data");
+                throw new ArgumentException("InvalId input data");
             }
             return await _unitOfWork.LikePostRepository.GetUsersReactionAsync(entityId, entity);
         }

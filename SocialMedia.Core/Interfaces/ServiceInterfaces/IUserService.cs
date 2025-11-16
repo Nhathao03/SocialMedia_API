@@ -7,9 +7,9 @@ namespace SocialMedia.Core.Services
     public interface IUserService
     {
         Task<IEnumerable<User?>?> GetAllUsersAsync();
-        Task<User?> GetUserByIdAsync(string id);
+        Task<User?> GetUserByIdAsync(string Id);
         Task UpdateUserAsync(User user);
-        Task<bool> DeleteUserAsync(string id);
+        Task<bool> DeleteUserAsync(string Id);
         Task<AuthResultDTO?> RegisterAccountAsync (RegisterDTO registerDTO);
 
         //Profile

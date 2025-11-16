@@ -22,7 +22,7 @@ namespace SocialMedia
 
             message.Body = new TextPart("plain")
             {
-                Text = $"Your OTP for password reset is: {otp}. It is valid for 5 minutes."
+                Text = $"Your OTP for password reset is: {otp}. It is valId for 5 minutes."
             };
 
             using var client = new SmtpClient();

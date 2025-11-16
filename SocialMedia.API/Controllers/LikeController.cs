@@ -29,7 +29,7 @@ namespace Social_Media.Controllers
         /// </summary>
         /// <param name="dto">The like data to add</param>
         /// <response code="201">Reacted successfully</response>
-        /// <response code="400">Invalid input data.</response>
+        /// <response code="400">InvalId input data.</response>
         /// <response code="404">Already reacted.</response>
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
@@ -39,18 +39,17 @@ namespace Social_Media.Controllers
             _logger.LogInformation("Add reaction to entity");
             if (string.IsNullOrWhiteSpace(dto.UserId) || dto.EntityId <= 0)
             {
-                _logger.LogWarning("Invalid input data");
-                return ApiResponseHelper.BadRequest("Invalid input data");
+                _logger.LogWarning("InvalId input data");
+                return ApiResponseHelper.BadRequest("InvalId input data");
             }
             try
             {
                 await _likeService.AddReactionAsync(dto);
                 return ApiResponseHelper.Created("Entity reacted");
             }
-            catch (InvalidOperationException ex)
+            catch (Exception ex)
             {
-                _logger.LogWarning(ex, "Already reacted");
-                return ApiResponseHelper.BadRequest("Already reacted");
+                return StatusCode(500, $"Error: {ex.InnerException?.Message}");
             }
         }
 
@@ -59,7 +58,7 @@ namespace Social_Media.Controllers
         /// </summary>
         /// <param name="dto">The like data to remove</param>
         /// <response code="200">Unliked entity successfully</response>
-        /// <response code="400">Invalid input data.</response>
+        /// <response code="400">InvalId input data.</response>
         /// <response code="404">Not react yet.</response>
         [HttpDelete]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -69,18 +68,18 @@ namespace Social_Media.Controllers
             _logger.LogInformation("Unlike post");
             if (string.IsNullOrWhiteSpace(dto.UserId) || dto.EntityId <= 0)
             {
-                _logger.LogWarning("Invalid input data");
-                return ApiResponseHelper.BadRequest("Invalid input data");
+                _logger.LogWarning("InvalId input data");
+                return ApiResponseHelper.BadRequest("InvalId input data");
             }
             try
             {
                 await _likeService.RemoveReactionAsync(dto);
                 return ApiResponseHelper.Success("Post unliked");
             }
-            catch (KeyNotFoundException ex)
+            catch (Exception ex)
             {
                 _logger.LogWarning(ex, "Not react yet");
-                return ApiResponseHelper.BadRequest("Not react yet");
+                return StatusCode(500, $"Error: {ex.InnerException?.Message}");
             }
         }
 
@@ -89,7 +88,7 @@ namespace Social_Media.Controllers
         /// </summary>
         /// <param name="dto">The like data to toggle</param>
         /// <response code="200">Toggle entity successfully</response>
-        /// <response code="400">Invalid input data.</response>
+        /// <response code="400">InvalId input data.</response>
         [HttpPost("toggle")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -98,8 +97,8 @@ namespace Social_Media.Controllers
             _logger.LogInformation("Toggle post");
             if (string.IsNullOrWhiteSpace(dto.UserId) || dto.EntityId <= 0)
             {
-                _logger.LogWarning("Invalid input data");
-                return ApiResponseHelper.BadRequest("Invalid input data");
+                _logger.LogWarning("InvalId input data");
+                return ApiResponseHelper.BadRequest("InvalId input data");
             }
             try
             {
@@ -109,17 +108,17 @@ namespace Social_Media.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error toggling reaction");
-                return ApiResponseHelper.InternalServerError("Error toggling reaction");
+                return StatusCode(500, $"Error: {ex.InnerException?.Message}");
             }
         }
 
         /// <summary>
         /// React count post
         /// </summary>
-        /// <param name="entityId">The unique id of the entity</param>
+        /// <param name="entityId">The unique Id of the entity</param>
         /// <param name="entityTypeEnum">Type of entity</param>
         /// <response code="200">Retrives like count entity successfully</response>
-        /// <response code="400">Invalid input data.</response>
+        /// <response code="400">InvalId input data.</response>
         [HttpGet("count/{entityId:int}")]
         [SwaggerOperation(Summary = "Get like count entity based on LikeDTO")]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -129,8 +128,8 @@ namespace Social_Media.Controllers
             _logger.LogInformation("Get post like count");
             if (entityId <= 0)
             {
-                _logger.LogWarning("Invalid input data");
-                return ApiResponseHelper.BadRequest("Invalid input data");
+                _logger.LogWarning("InvalId input data");
+                return ApiResponseHelper.BadRequest("InvalId input data");
             }
             try
             {
@@ -140,7 +139,7 @@ namespace Social_Media.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error retrieving like count");
-                return ApiResponseHelper.InternalServerError("Error retrieving like count");
+                return StatusCode(500, $"Error: {ex.InnerException?.Message}");
             }
         }
 
@@ -149,7 +148,7 @@ namespace Social_Media.Controllers
         /// </summary>
         /// <param name="dto">The like data to get users</param>
         /// <response code="200">Retrives entity likers successfully</response>
-        /// <response code="400">Invalid input data.</response>
+        /// <response code="400">InvalId input data.</response>
         [HttpGet("users/{entityId:int}")]
         [SwaggerOperation(Summary = "Get entity liker based on entityId")]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -159,8 +158,8 @@ namespace Social_Media.Controllers
             _logger.LogInformation("Get post likers");
             if (entityId <= 0)
             {
-                _logger.LogWarning("Invalid input data");
-                return ApiResponseHelper.BadRequest("Invalid input data");
+                _logger.LogWarning("InvalId input data");
+                return ApiResponseHelper.BadRequest("InvalId input data");
             }
             try
             {
@@ -170,7 +169,7 @@ namespace Social_Media.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error retrieving likers");
-                return ApiResponseHelper.InternalServerError("Error retrieving likers");
+                return StatusCode(500, $"Error: {ex.InnerException?.Message}");
             }
         }
     }

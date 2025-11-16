@@ -15,7 +15,7 @@ namespace Social_Media.Helpers
             new BadRequestObjectResult(new ApiResponse<object>((int)HttpStatusCode.BadRequest, message));
         public static IActionResult Unauthorized(string? message = null) =>
             new UnauthorizedObjectResult(new ApiResponse<object>((int)HttpStatusCode.Unauthorized, message));
-        public static IActionResult Forbidden(string? message = null) =>
+        public static IActionResult ForbIdden(string? message = null) =>
             new ObjectResult(new ApiResponse<string>((int)HttpStatusCode.Forbidden, message)) { StatusCode = 403 };
         public static IActionResult InternalServerError(string? message = null) =>
             new ObjectResult(new ApiResponse<string>((int)HttpStatusCode.InternalServerError, message)) { StatusCode = 500 };
