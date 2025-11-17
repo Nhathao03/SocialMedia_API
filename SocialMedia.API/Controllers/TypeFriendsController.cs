@@ -37,22 +37,22 @@ namespace Social_Media.Controllers
             return Ok(typeFriends);
         }
 
-        // Get type friend by ID
-        [HttpGet("getTypeFriendsById/{id}")]
-        public async Task<IActionResult> getTypeFriendsById(int id)
+        // Get type friend by Id
+        [HttpGet("getTypeFriendsById/{Id}")]
+        public async Task<IActionResult> getTypeFriendsById(int Id)
         {
-            var typeFriend = await _typeFriendsService.GetTypeFriendsByIdAsync(id);
+            var typeFriend = await _typeFriendsService.GetTypeFriendsByIdAsync(Id);
             if (typeFriend == null) return NotFound("Type friend not found");
             return Ok(typeFriend);
         }
 
-        // Delete type friend by ID
-        [HttpDelete("deleteTypeFriend/{id}")]
-        public async Task<IActionResult> deleteTypeFriend(int id)
+        // Delete type friend by Id
+        [HttpDelete("deleteTypeFriend/{Id}")]
+        public async Task<IActionResult> deleteTypeFriend(int Id)
         {
-            var typeFriend = await _typeFriendsService.GetTypeFriendsByIdAsync(id);
+            var typeFriend = await _typeFriendsService.GetTypeFriendsByIdAsync(Id);
             if (typeFriend == null) return NotFound("Type friend not found");
-            await _typeFriendsService.DeleteTypeFriendsAsync(id);
+            await _typeFriendsService.DeleteTypeFriendsAsync(Id);
             return Ok("Delete type friend success");
         }
          

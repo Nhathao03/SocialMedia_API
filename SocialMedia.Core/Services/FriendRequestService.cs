@@ -23,9 +23,9 @@ namespace SocialMedia.Core.Services
             _logger = logger;
         }
 
-        public async Task<FriendRequest?> GetFriendRequestByIdAsync(int id)
+        public async Task<FriendRequest?> GetFriendRequestByIdAsync(int Id)
         {
-            return await _unitOfWork.FriendRequestRepository.GetFriendRequestByIdAsync(id);
+            return await _unitOfWork.FriendRequestRepository.GetFriendRequestByIdAsync(Id);
         }
 
         public async Task<RetriveFriendRequestDTO?> SendFriendRequestAsync(FriendRequestDTO dto)
@@ -49,12 +49,12 @@ namespace SocialMedia.Core.Services
 
             if (existingRequest != null)
             {
-                switch (existingRequest.status)
+                switch (existingRequest.Status)
                 {
                     case (int)Constants.FriendRequestStatus.Pending:
-                        if (existingRequest.SenderID == dto.ReceiverId)
+                        if (existingRequest.SenderId == dto.ReceiverId)
                         {
-                            existingRequest.status = (int)Constants.FriendRequestStatus.Accepted;
+                            existingRequest.Status = (int)Constants.FriendRequestStatus.Accepted;
                             existingRequest.CreatedAt = DateTime.UtcNow;
                             await _unitOfWork.FriendRequestRepository.UpdateFriendRequestAsync(existingRequest);
 
@@ -64,9 +64,9 @@ namespace SocialMedia.Core.Services
 
                             var addFriend = new FriendDTO
                             {
-                                UserID = existingRequest.SenderID,
-                                FriendID = existingRequest.ReceiverID,
-                                Type_FriendsID = (int)Constants.FriendsEnum.Normal
+                                UserId = existingRequest.SenderId,
+                                FriendId = existingRequest.ReceiverId,
+                                Type_FriendsId = (int)Constants.FriendsStatus.Normal
                             };
                             var mapperFriend = _mapper.Map<Friends>(addFriend);
 
@@ -96,110 +96,110 @@ namespace SocialMedia.Core.Services
             }
 
             var friendRequest = _mapper.Map<FriendRequest>(dto);
-            friendRequest.status = (int)Constants.FriendRequestStatus.Pending;
+            friendRequest.Status = (int)Constants.FriendRequestStatus.Pending;
 
             var result = await _unitOfWork.FriendRequestRepository.AddFriendRequestAsync(friendRequest);
             return _mapper.Map<RetriveFriendRequestDTO>(result);
         }
 
-        public async Task<RetriveFriendRequestDTO?> UpdateFriendRequestAsync(int id, FriendRequestDTO dto)
+        public async Task<RetriveFriendRequestDTO?> UpdateFriendRequestAsync(int Id, FriendRequestDTO dto)
         {
-            _logger.LogInformation("Updating friend request with ID {CommentId}", id);
-            var existingFriendrequest = _unitOfWork.FriendRequestRepository.GetFriendRequestByIdAsync(id);
+            _logger.LogInformation("Updating friend request with Id {CommentId}", Id);
+            var existingFriendrequest = _unitOfWork.FriendRequestRepository.GetFriendRequestByIdAsync(Id);
             if (existingFriendrequest is null)
             {
-                throw new KeyNotFoundException($"Friend request with Id {id} not exits");
+                throw new KeyNotFoundException($"Friend request with Id {Id} not exits");
             }
 
             var friendrequest = _mapper.Map<FriendRequest>(dto);
             var result = await _unitOfWork.FriendRequestRepository.UpdateFriendRequestAsync(friendrequest);
-            _logger.LogInformation("Friend request updated with Id {friendrequestId}", result?.ID);
+            _logger.LogInformation("Friend request updated with Id {friendrequestId}", result?.Id);
             return _mapper.Map<RetriveFriendRequestDTO?>(result);
         }
 
-        public async Task<bool> DeleteFriendRequestAsync(int id)
+        public async Task<bool> DeleteFriendRequestAsync(int Id)
         {
-            _logger.LogInformation("Deleting friend request with Id {friendreequestId}", id);
-            var exitstingfriendrequest = await _unitOfWork.FriendRequestRepository.GetFriendRequestByIdAsync(id);
+            _logger.LogInformation("Deleting friend request with Id {friendreequestId}", Id);
+            var exitstingfriendrequest = await _unitOfWork.FriendRequestRepository.GetFriendRequestByIdAsync(Id);
             if (exitstingfriendrequest is null)
-                throw new KeyNotFoundException($"Friend request with Id {id} does not exits.");
-            var result = await _unitOfWork.FriendRequestRepository.DeleteFriendRequestAsync(id);
-            _logger.LogInformation("Friend request with ID {friendrequestId} deleted successfully", id);
+                throw new KeyNotFoundException($"Friend request with Id {Id} does not exits.");
+            var result = await _unitOfWork.FriendRequestRepository.DeleteFriendRequestAsync(Id);
+            _logger.LogInformation("Friend request with Id {friendrequestId} deleted successfully", Id);
             return result;
         }
 
-        public async Task<List<FriendRequest>?> GetFriendRequestByUserIdAsync(string id)
+        public async Task<List<FriendRequest>?> GetFriendRequestByUserIdAsync(string Id)
         {
-            var friendrequest = await _unitOfWork.FriendRequestRepository.GetFriendRequestByUserIdAsync(id);
+            var friendrequest = await _unitOfWork.FriendRequestRepository.GetFriendRequestByUserIdAsync(Id);
             if( friendrequest is null)
             {
-                throw new KeyNotFoundException($"Friend request with Id {id} not exits");
+                throw new KeyNotFoundException($"Friend request with Id {Id} not exits");
             }
             return friendrequest;
         }
 
-        public async Task<RetriveFriendDTO?> AcceptFriendRequestAsync(int id)
+        public async Task<RetriveFriendDTO?> AcceptFriendRequestAsync(int Id)
         {
-            _logger.LogInformation("Adding a new friend with Friend Request ID {FriendRequestId}", id);
-            if (id <= 0)
+            _logger.LogInformation("Adding a new friend with Friend Request Id {FriendRequestId}", Id);
+            if (Id <= 0)
             {
-                throw new ArgumentException("Invalid Friend Request ID.");
+                throw new ArgumentException("InvalId Friend Request Id.");
             }
-            var existingFriendRequest = await _unitOfWork.FriendRequestRepository.GetFriendRequestByIdAsync(id);
+            var existingFriendRequest = await _unitOfWork.FriendRequestRepository.GetFriendRequestByIdAsync(Id);
             if (existingFriendRequest is null)
             {
-                throw new KeyNotFoundException($"Friend Request with Id {id} not exists.");
+                throw new KeyNotFoundException($"Friend Request with Id {Id} not exists.");
             }
 
             var friendData = new FriendDTO
             {
-                UserID = existingFriendRequest.SenderID,
-                FriendID = existingFriendRequest.ReceiverID,
-                Type_FriendsID = (int)Constants.FriendsEnum.Normal,
+                UserId = existingFriendRequest.SenderId,
+                FriendId = existingFriendRequest.ReceiverId,
+                Type_FriendsId = (int)Constants.FriendsStatus.Normal,
             };
 
             var friend = _mapper.Map<Friends>(friendData);
             var result = await _unitOfWork.FriendRepository.AddFriendAsync(friend);
-            existingFriendRequest.status = (int)Constants.FriendRequestStatus.Accepted;
+            existingFriendRequest.Status = (int)Constants.FriendRequestStatus.Accepted;
             await _unitOfWork.FriendRequestRepository.UpdateFriendRequestAsync(existingFriendRequest);
-            _logger.LogInformation("Friend added with ID {FriendId}", result?.ID);
+            _logger.LogInformation("Friend added with Id {FriendId}", result?.Id);
             return _mapper.Map<RetriveFriendDTO>(result);
         }
 
-        public async Task RejectFriendRequestAsync(int id)
+        public async Task RejectFriendRequestAsync(int Id)
         {
-            _logger.LogInformation("Reject friend request ID {FriendRequstId}", id);
-            if (id <= 0)
+            _logger.LogInformation("Reject friend request Id {FriendRequstId}", Id);
+            if (Id <= 0)
             {
-                throw new ArgumentException("Invalid friend request ID");
+                throw new ArgumentException("InvalId friend request Id");
             }
-            var existingFriendRequest = await _unitOfWork.FriendRequestRepository.GetFriendRequestByIdAsync(id);
+            var existingFriendRequest = await _unitOfWork.FriendRequestRepository.GetFriendRequestByIdAsync(Id);
             if (existingFriendRequest is null)
             {
-                throw new KeyNotFoundException($"Friend Request with Id {id} not exists.");
+                throw new KeyNotFoundException($"Friend Request with Id {Id} not exists.");
             }
 
-            existingFriendRequest.status = (int)Constants.FriendRequestStatus.Rejected;
+            existingFriendRequest.Status = (int)Constants.FriendRequestStatus.Rejected;
             var result = await _unitOfWork.FriendRequestRepository.UpdateFriendRequestAsync(existingFriendRequest);
-            _logger.LogInformation("Friend rejected with ID {FriendId}", result?.ID);
+            _logger.LogInformation("Friend rejected with Id {FriendId}", result?.Id);
         }
 
-        public async Task CancelFriendRequestAsync(int id)
+        public async Task CancelFriendRequestAsync(int Id)
         {
-            _logger.LogInformation("Cancel friend request ID {FriendRequstId}", id);
-            if (id <= 0)
+            _logger.LogInformation("Cancel friend request Id {FriendRequstId}", Id);
+            if (Id <= 0)
             {
-                throw new ArgumentException("Invalid friend request ID");
+                throw new ArgumentException("InvalId friend request Id");
             }
-            var existingFriendRequest = await _unitOfWork.FriendRequestRepository.GetFriendRequestByIdAsync(id);
+            var existingFriendRequest = await _unitOfWork.FriendRequestRepository.GetFriendRequestByIdAsync(Id);
             if (existingFriendRequest is null)
             {
-                throw new KeyNotFoundException($"Friend Request with Id {id} not exists.");
+                throw new KeyNotFoundException($"Friend Request with Id {Id} not exists.");
             }
 
-            existingFriendRequest.status = (int)Constants.FriendRequestStatus.Canceled;
+            existingFriendRequest.Status = (int)Constants.FriendRequestStatus.Canceled;
             var result = await _unitOfWork.FriendRequestRepository.UpdateFriendRequestAsync(existingFriendRequest);
-            _logger.LogInformation("Friend canceled with ID {FriendId}", result?.ID);
+            _logger.LogInformation("Friend canceled with Id {FriendId}", result?.Id);
         }
 
         public async Task<List<FriendRequest>?> GetSentRequestAsync(string userId)

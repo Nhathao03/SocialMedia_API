@@ -1,11 +1,8 @@
 ﻿using AutoMapper;
+using SocialMedia.Core.DTO.Role;
+using SocialMedia.Core.Entities.DTO.Role;
 using SocialMedia.Core.Entities.DTO.RoleCheck;
 using SocialMedia.Core.Entities.RoleEntity;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SocialMedia.Core.Mapping
 {
@@ -14,6 +11,8 @@ namespace SocialMedia.Core.Mapping
         public RoleMapping()
         {
             CreateMap<RoleCheck, RoleCheckDTO>().ReverseMap();
+            CreateMap<Role, RoleDTO>().ReverseMap();
+            CreateMap<Role, RetriveRoleDTO>().ReverseMap();
         }
     }
 }

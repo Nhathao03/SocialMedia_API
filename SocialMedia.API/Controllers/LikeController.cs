@@ -1,91 +1,176 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using SocialMedia.Core.Services;
-using SocialMedia.Core.Entities;
+using Social_Media.Helpers;
 using SocialMedia.Core.DTO.Post;
+using SocialMedia.Core.Entities;
+using SocialMedia.Core.Entities.Entity;
+using SocialMedia.Core.Entities.PostEntity;
+using SocialMedia.Core.Services;
+using Swashbuckle.AspNetCore.Annotations;
+using System.Net.Http.Headers;
 
 namespace Social_Media.Controllers
 {
     [Route("api/like")]
     [ApiController]
     public class LikeController : ControllerBase
-    { 
+    {
         private readonly ILikeService _likeService;
-        private readonly ICommentService _commentService;
+        private readonly ILogger<LikeController> _logger;   
 
         public LikeController(ILikeService likeService,
-            ICommentService commentService)
+            ILogger<LikeController> logger)
         {
             _likeService = likeService;
-            _commentService = commentService;
+            _logger = logger;
         }
 
-        //Add like to post
-        [HttpPost("AddLike")]
-        public async Task<IActionResult> AddLike([FromBody] LikeDTO likeDTO)
+        /// <summary>
+        /// Add reaction like to entity
+        /// </summary>
+        /// <param name="dto">The like data to add</param>
+        /// <response code="201">Reacted successfully</response>
+        /// <response code="400">InvalId input data.</response>
+        /// <response code="404">Already reacted.</response>
+        [HttpPost]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> AddReact(LikeDTO dto)
         {
-            if (!ModelState.IsValid)
+            _logger.LogInformation("Add reaction to entity");
+            if (string.IsNullOrWhiteSpace(dto.UserId) || dto.EntityId <= 0)
             {
-                return BadRequest(ModelState);
+                _logger.LogWarning("InvalId input data");
+                return ApiResponseHelper.BadRequest("InvalId input data");
             }
-
-            // Check userID and postID
-            var existingLike = await _likeService.CheckLikeUserOnPost(likeDTO.UserID, likeDTO.postID);
-            if (existingLike != null)
+            try
             {
-                deleteLikeByID(existingLike.ID);
-                return BadRequest("Deleted like this post.");
+                await _likeService.AddReactionAsync(dto);
+                return ApiResponseHelper.Created("Entity reacted");
             }
-            await _likeService.AddLikeAsync(likeDTO);
-            return Ok("Add new like post sucess !");
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Error: {ex.InnerException?.Message}");
+            }
         }
 
-        //Get all likes
-        [HttpGet("GetAllLike")]
-        public async Task<IActionResult> getAllLike()
+        /// <summary>
+        /// Unlike entity
+        /// </summary>
+        /// <param name="dto">The like data to remove</param>
+        /// <response code="200">Unliked entity successfully</response>
+        /// <response code="400">InvalId input data.</response>
+        /// <response code="404">Not react yet.</response>
+        [HttpDelete]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> UnlikePost(LikeDTO dto)
         {
-            var like = await _likeService.GetAllLikeAsync();
-            if (like == null) return NotFound();
-            return Ok(like);
+            _logger.LogInformation("Unlike post");
+            if (string.IsNullOrWhiteSpace(dto.UserId) || dto.EntityId <= 0)
+            {
+                _logger.LogWarning("InvalId input data");
+                return ApiResponseHelper.BadRequest("InvalId input data");
+            }
+            try
+            {
+                await _likeService.RemoveReactionAsync(dto);
+                return ApiResponseHelper.Success("Post unliked");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogWarning(ex, "Not react yet");
+                return StatusCode(500, $"Error: {ex.InnerException?.Message}");
+            }
         }
 
-        //Get like by ID
-        [HttpGet("getLikebyId/{id}")]
-        public async Task<IActionResult> getLikeByID (int id)
+        /// <summary>
+        /// Toggle entity
+        /// </summary>
+        /// <param name="dto">The like data to toggle</param>
+        /// <response code="200">Toggle entity successfully</response>
+        /// <response code="400">InvalId input data.</response>
+        [HttpPost("toggle")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> ToggleReactEntity(LikeDTO dto)
         {
-            var like  = _likeService.GetLikeByIdAsync(id);
-            if(like == null) return NotFound();
-            return Ok(like);
+            _logger.LogInformation("Toggle post");
+            if (string.IsNullOrWhiteSpace(dto.UserId) || dto.EntityId <= 0)
+            {
+                _logger.LogWarning("InvalId input data");
+                return ApiResponseHelper.BadRequest("InvalId input data");
+            }
+            try
+            {
+                var result = await _likeService.ToggleReactionAsync(dto);
+                return ApiResponseHelper.Success(new { Status = result ? "Reacted" : "Unliked" });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error toggling reaction");
+                return StatusCode(500, $"Error: {ex.InnerException?.Message}");
+            }
         }
 
-        //Delete like by ID
-        [HttpDelete("deleteLikeByID/{id}")]
-        public async Task<IActionResult> deleteLikeByID(int id)
+        /// <summary>
+        /// React count post
+        /// </summary>
+        /// <param name="entityId">The unique Id of the entity</param>
+        /// <param name="entityTypeEnum">Type of entity</param>
+        /// <response code="200">Retrives like count entity successfully</response>
+        /// <response code="400">InvalId input data.</response>
+        [HttpGet("count/{entityId:int}")]
+        [SwaggerOperation(Summary = "Get like count entity based on LikeDTO")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> GetEntityCount(int entityId, EntityTypeEnum entityTypeEnum)
         {
-            await _likeService.DeleteLikeAsync(id);
-            return NoContent();
+            _logger.LogInformation("Get post like count");
+            if (entityId <= 0)
+            {
+                _logger.LogWarning("InvalId input data");
+                return ApiResponseHelper.BadRequest("InvalId input data");
+            }
+            try
+            {
+                var count = await _likeService.GetReactionCountAsync(entityId, entityTypeEnum);
+                return ApiResponseHelper.Success(new { Count = count });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error retrieving like count");
+                return StatusCode(500, $"Error: {ex.InnerException?.Message}");
+            }
         }
 
-        //Add like to comment by ID
-        [HttpPost("AddLikeComment/{id}")]
-        public async Task<IActionResult> AddLikeComment(int id)
+        /// <summary>
+        /// Get entity likers
+        /// </summary>
+        /// <param name="dto">The like data to get users</param>
+        /// <response code="200">Retrives entity likers successfully</response>
+        /// <response code="400">InvalId input data.</response>
+        [HttpGet("users/{entityId:int}")]
+        [SwaggerOperation(Summary = "Get entity liker based on entityId")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> GetEntityLikers(int entityId, EntityTypeEnum entity)
         {
-            var commentData = await _commentService.GetCommentByIdAsync(id);
-            if (commentData == null) return NotFound("Comment not found.");
-
-            //await _commentService.UpdateCommentAsync(dataUpdate);
-
-            return NoContent();
-        }
-
-        // add like to comment by comment ID and user ID
-
-        //Get all likes by post ID
-        [HttpGet("GetLikesByPostID/{postID}")]
-        public async Task<IActionResult> GetLikesByPostID(int postID)
-        {
-            var likes = await _likeService.GetLikesByPostIdAsync(postID);
-            if (likes == null) return NotFound();
-            return Ok(likes);
+            _logger.LogInformation("Get post likers");
+            if (entityId <= 0)
+            {
+                _logger.LogWarning("InvalId input data");
+                return ApiResponseHelper.BadRequest("InvalId input data");
+            }
+            try
+            {
+                var users = await _likeService.GetUsersReactionAsync(entityId, entity);
+                return ApiResponseHelper.Success(users, "Retrives entity likers");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error retrieving likers");
+                return StatusCode(500, $"Error: {ex.InnerException?.Message}");
+            }
         }
     }
 }

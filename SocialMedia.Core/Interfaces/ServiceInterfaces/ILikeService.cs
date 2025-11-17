@@ -5,12 +5,12 @@ namespace SocialMedia.Core.Services
 {
     public interface ILikeService
     {
-        Task<IEnumerable<Like>> GetAllLikeAsync();
-        Task<Like> GetLikeByIdAsync(int id);
-        Task AddLikeAsync(LikeDTO like);
-        Task UpdateLikeAsync(LikeDTO like);
-        Task DeleteLikeAsync(int id);
-        Task<Like?> CheckLikeUserOnPost(string userId, int postId);
-        Task<IEnumerable<Like>> GetLikesByPostIdAsync(int postId);
+        Task AddReactionAsync(LikeDTO dto);
+        Task<bool> RemoveReactionAsync(LikeDTO dto);
+        Task<bool> ToggleReactionAsync(LikeDTO dto);
+        Task<int> GetReactionCountAsync(int entityId, EntityTypeEnum entity);
+        Task<bool> HasUserReactionAsync(LikeDTO dto);
+        Task<List<string?>> GetUsersReactionAsync(int entityId, EntityTypeEnum entity);
     }
 }
+   

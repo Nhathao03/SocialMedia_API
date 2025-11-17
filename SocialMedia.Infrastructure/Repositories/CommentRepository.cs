@@ -13,35 +13,35 @@ namespace SocialMedia.Infrastructure.Repositories
         {
             _context = context;
         }
-        public async Task<Comment?> GetCommentByIdAsync(int id)
+        public async Task<Comment?> GetCommentByIdAsync(int Id)
         {
-            return await _context.comments.FirstOrDefaultAsync(p => p.ID == id);
+            return await _context.Comments.FirstOrDefaultAsync(p => p.Id == Id);
         }
-        public async Task<List<Comment>?> GetCommentByPostIdAsync(int id)
+        public async Task<List<Comment>?> GetCommentByPostIdAsync(int Id)
         {
-            return await _context.comments.Where(c => c.PostId == id).ToListAsync();
+            return await _context.Comments.Where(c => c.PostId == Id).ToListAsync();
         }
 
         public async Task<Comment?> AddCommentAsync(Comment comment)
         {
-            _context.comments.Add(comment);
+            _context.Comments.Add(comment);
             await _context.SaveChangesAsync();
             return comment;
         }
 
         public async Task<Comment?> UpdateCommentAsync(Comment comment)
         {
-            _context.comments.Update(comment);
+            _context.Comments.Update(comment);
             await _context.SaveChangesAsync();
             return comment;
         }
 
-        public async Task<bool> DeleteCommentAsync(int id)
+        public async Task<bool> DeleteCommentAsync(int Id)
         {
-            var comment = await _context.comments.FindAsync(id);
+            var comment = await _context.Comments.FindAsync(Id);
             if(comment is null)
                 return false;
-            _context.comments.Remove(comment);
+            _context.Comments.Remove(comment);
             await _context.SaveChangesAsync();
             return true;
         }

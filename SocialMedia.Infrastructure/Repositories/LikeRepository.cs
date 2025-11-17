@@ -14,47 +14,68 @@ namespace SocialMedia.Infrastructure.Repositories
             _context = context;
         }
 
-        public async Task<IEnumerable<Like>> GetAllLikes()
+        public async Task<Like?> GetLikeAsync(Like like)
         {
-            return await _context.likes.ToListAsync();
+            return await _context.Likes
+                .FirstOrDefaultAsync(l => l.UserId == like.UserId && l.EntityId == like.EntityId && l.EntityType == like.EntityType);
         }
-
-        public async Task<Like> GetLikeById(int id)
+        public async Task AddReactionAsync(Like like)
         {
-            return await _context.likes.FirstOrDefaultAsync(p => p.ID == id);
-        }
-
-        public async Task AddLike(Like like)
-        {          
-            _context.AddAsync(like);
+            _context.Likes.Add(like);
             await _context.SaveChangesAsync();
         }
 
-        public async Task UpdateLike(Like like)
+        public async Task<bool> RemoveReactionAsync(Like like)
         {
-            _context.likes.Update(like);
-            await _context.SaveChangesAsync();
-        }
-
-        public async Task DeleteLike(int id)
-        {
-            var like = await _context.likes.FindAsync(id);
-            if (like != null)
+            var existing = await _context.Likes
+           .FirstOrDefaultAsync(l => l.UserId == like.UserId && l.EntityId == like.EntityId && l.EntityType == like.EntityType);
+            if (existing == null)
             {
-                _context.likes.Remove(like);
-                await _context.SaveChangesAsync();
+                return false; // Not found
             }
+            _context.Likes.Remove(existing);
+            await _context.SaveChangesAsync();
+            return true; // Removed
         }
 
-        public async Task<Like?> GetLikeByUserAndPost(string userId, int postId)
+        public async Task<bool> ToggleReactionAsync(Like like)
         {
-            return await _context.likes.FirstOrDefaultAsync(l => l.UserId == userId && l.PostId == postId);
+            var existing = await _context.Likes
+            .FirstOrDefaultAsync(l => l.UserId == like.UserId && l.EntityId == like.EntityId && l.EntityType == like.EntityType);
+
+            if (existing != null)
+            {
+                _context.Likes.Remove(existing);
+                await _context.SaveChangesAsync();
+                return false; // Unliked
+            }
+
+            _context.Likes.Add(new Like
+            {
+                UserId = like.UserId,
+                EntityId = like.EntityId,
+                EntityType = like.EntityType
+            });
+            await _context.SaveChangesAsync();
+            return true; // Liked
         }
 
-        public async Task<IEnumerable<Like>> GetLikesByPostId(int postId)
+        public async Task<int> GetReactionCountAsync(int entityId, EntityTypeEnum entity)
         {
-            return await _context.likes.Where(l => l.PostId == postId).ToListAsync();
+            return await _context.Likes.CountAsync(l => l.EntityId == entityId && l.EntityType == entity);
         }
 
+        public async Task<bool> HasUserReactionAsync(Like like)
+        {
+            return await _context.Likes.AnyAsync(l => l.UserId == like.UserId && l.EntityId == like.EntityId && l.EntityType == like.EntityType);
+        }
+
+        public async Task<List<string?>> GetUsersReactionAsync(int entityId, EntityTypeEnum entity)
+        {
+            return await _context.Likes
+                .Where(l => l.EntityId == entityId && l.EntityType == entity)
+                .Select(l => l.UserId)
+                .ToListAsync();
+        }
     }
 }

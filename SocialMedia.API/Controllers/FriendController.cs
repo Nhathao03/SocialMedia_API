@@ -8,7 +8,7 @@ using SocialMedia.Core.DTO.Friend;
 
 namespace Social_Media.Controllers
 {
-    [Route("api/friend")]
+    [Route("api/friends")]
     [ApiController]
     public class FriendController : ControllerBase
     {
@@ -21,167 +21,192 @@ namespace Social_Media.Controllers
         }
 
         /// <summary>
-        /// Retrieves list friend recantly added for a user.
-        /// </summary>
-        /// <param name="id">The unique ID of the user.</param>
-        /// <returns>Returns list object if found.</returns>
-        /// <response code="200">List friends retrieved successfully.</response>
-        /// <response code="400">Invalid ID provided.</response>
-        /// <response code="404">Friend not found.</response>
-        [HttpGet("recently-added/{id}")]
-        [SwaggerOperation(Summary = "Get list friend recently added for a user", Description = "Retrieves list friend recently added for a user by their unique ID.")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> GetFriendRecentlyAddedAsync([FromRoute] string id)
-        {
-            _logger.LogInformation("Getting list friend recently added for user with ID {UserId}", id);
-            if (string.IsNullOrWhiteSpace(id))
-            {
-                _logger.LogWarning("Invalid user ID provided.");
-                return ApiResponseHelper.BadRequest("Invalid user ID.");
-            }
-            var friends = await _friendsService.GetFriendRecentlyAddedAsync(id);
-            if (friends is null || !friends.Any())
-            {
-                _logger.LogInformation("No friends found for user with ID {UserId}", id);
-                return ApiResponseHelper.NotFound("No friends found.");
-            }
-            _logger.LogInformation("List friends retrieved successfully for user with ID {UserId}", id);
-            return ApiResponseHelper.Success(friends, "Get friends recently add successfully.");
-        }
-
-        /// <summary>
-        /// Retrieves list friend base on hometown
-        /// </summary>
-        /// <param name="id">The unique ID of the user.</param>
-        /// <returns>Returns list object if found.</returns>
-        /// <response code="200">List friends retrieved successfully.</response>
-        /// <response code="400">Invalid ID provided.</response>
-        /// <response code="404">Friend not found.</response>
-        [HttpGet("hometown/{id}")]
-        [SwaggerOperation(Summary = "Get list friend base on hometown for a user", Description = "Retrieves list friend base on hometown for a user by their unique ID.")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> GetFriendBaseOnHomeTown([FromRoute] string id)
-        {
-            _logger.LogInformation("Getting list friend base on hometown with ID {UserId}", id);
-            if (string.IsNullOrWhiteSpace(id))
-            {
-                _logger.LogWarning("Invalid user ID provided.");
-                return ApiResponseHelper.BadRequest("Invalid user ID.");
-            }
-            var friends = await _friendsService.GetFriendBaseOnHomeTownAsync(id);
-            if (friends is null || !friends.Any())
-            {
-                _logger.LogInformation("No friends found for user with ID {UserId}", id);
-                return ApiResponseHelper.NotFound("No friends found.");
-            }
-            _logger.LogInformation("List friends retrieved successfully for user with ID {UserId}", id);
-            return ApiResponseHelper.Success(friends, "Get friends base on hometown successfully.");
-        }
-
-        /// <summary>
-        /// Update friend
-        /// </summary>  
-        /// <param name="id">The unique ID of the friend to update.</param>
-        /// <param name="dto">The friend data transfer object containing updated content and metadata.</param>
-        /// <returns >Returns the updated friend object or validation errors.</returns>
-        /// <response code="200">Friend updated successfully.</response>
-        /// <response code="400">Invalid ID provided.</response>
-        /// <response code="404">Friend not found.</response>
-        [HttpPut("{id:int}")]
-        [SwaggerOperation(Summary = "Update an existing friend", Description = "Updates an existing friend based on the provided ID and data.")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> UpdateFriendsAsync([FromRoute] int id, [FromBody] FriendDTO dto)
-        {
-            _logger.LogInformation("Updating friend with ID {FriendId}", id);
-            if (id <= 0)
-            {
-                _logger.LogWarning("Invalid Friend ID provided.");
-                return ApiResponseHelper.BadRequest("Invalid Friend ID.");
-            }
-            try
-            {
-                var result = await _friendsService.UpdateFriendsAsync(id, dto);
-                _logger.LogInformation("Friend updated successfully with ID {FriendId}", result?.Id);
-                return ApiResponseHelper.Success(result, "Friend updated successfully.");
-            }
-            catch (KeyNotFoundException knfEx)
-            {
-                _logger.LogWarning(knfEx, "Friend with ID {FriendId} not found.", id);
-                return ApiResponseHelper.NotFound(knfEx.Message);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error updating friend with ID {FriendId}", id);
-                return ApiResponseHelper.InternalServerError("An unexpected error occurred while updating the friend.");
-            }
-        }
-
-        /// <summary>
-        /// Delete friend
-        /// </summary>  
-        /// <param name="id">The unique ID of the friend to delete.</param>
-        /// <return >Returns a success message or validation errors.</returns>
-        /// <response code="200">Friend deleted successfully.</response>
-        /// <response code="400">Invalid ID provided.</response>
-        [HttpDelete("{id:int}")]
-        [SwaggerOperation(Summary = "Delete an existing friend", Description = "Deletes an existing friend based on the provided ID.")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> DeleteFriendByIdAsync([FromRoute] int id)
-        {
-            if (id <= 0)
-            {
-                _logger.LogWarning("Invalid ID provided for deletion: {Id}", id);
-                return ApiResponseHelper.BadRequest("Invalid friend ID. ID must be greater than zero.");
-            }
-
-            try
-            {
-                await _friendsService.DeleteFriendsAsync(id);
-                _logger.LogInformation("Friend deleted successfully. ID: {Id}", id);
-                return ApiResponseHelper.Success("Friend deleted successfully.");
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error occurred while deleting friend. ID: {Id}", id);
-                return ApiResponseHelper.InternalServerError("An unexpected error occurred while deleting the friend.");
-            }
-        }
-
-        /// <summary>
         /// Get all friends of a user
         /// </summary>
         /// <param name="userId">The unique Id of the user</param>
         /// <returns>List friends of a user</returns>
         /// <response code="200">List friends retrieved successfully.</response>
-        /// <response code="400">Invalid ID provided.</response>
+        /// <response code="400">InvalId Id provIded.</response>
         /// <response code="404">Friend not found.</response>
         [HttpGet("{userId}")]
         [SwaggerOperation(Summary = "Get all friends of a user")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IActionResult> GetFriends(string userId)
         {
-            _logger.LogInformation("Getting list friend of each user with ID {userId}", userId);
+            _logger.LogInformation("Getting list friend of each user with Id {userId}", userId);
             if (string.IsNullOrWhiteSpace(userId))
             {
-                _logger.LogWarning("Invalid user ID provided.");
-                return ApiResponseHelper.BadRequest("Invalid user ID.");
+                _logger.LogWarning("InvalId user Id provIded.");
+                return ApiResponseHelper.BadRequest("InvalId user Id.");
             }
-            var friends = await _friendsService.GetFriendOfEachUserAsync(userId);
-            if (friends is null || !friends.Any())
+            try
             {
-                _logger.LogInformation("No friends found for user with ID {userId}", userId);
-                return ApiResponseHelper.NotFound("No friends found.");
+                var friends = await _friendsService.GetFriendOfEachUserAsync(userId);
+                if (friends is null || !friends.Any())
+                {
+                    _logger.LogInformation("No friends found for user with Id {userId}", userId);
+                    return ApiResponseHelper.NotFound("No friends found.");
+                }
+                _logger.LogInformation("List friends retrieved successfully for user with Id {userId}", userId);
+                return ApiResponseHelper.Success(friends, "Get friends successfully.");
             }
-            _logger.LogInformation("List friends retrieved successfully for user with ID {UserId}", userId);
-            return ApiResponseHelper.Success(friends, "Get friends of each user successfully.");
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while retrieving friends for user with Id {userId}", userId);
+                return StatusCode(500, $"Error: {ex.InnerException?.Message}");
+			}
         }
 
+        /// <summary>
+        /// Retrieves list friend recantly added for a user.
+        /// </summary>
+        /// <param name="Id">The unique Id of the user.</param>
+        /// <returns>Returns list object if found.</returns>
+        /// <response code="200">List friends retrieved successfully.</response>
+        /// <response code="400">InvalId Id provIded.</response>
+        /// <response code="404">Friend not found.</response>
+        [HttpGet("recently-added/{Id}")]
+        [SwaggerOperation(Summary = "Get list friend recently added for a user", Description = "Retrieves list friend recently added for a user by their unique Id.")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> GetFriendRecentlyAddedAsync([FromRoute] string Id)
+        {
+            _logger.LogInformation("Getting list friend recently added for user with Id {UserId}", Id);
+            if (string.IsNullOrWhiteSpace(Id))
+            {
+                _logger.LogWarning("InvalId user Id provIded.");
+                return ApiResponseHelper.BadRequest("InvalId user Id.");
+            }
+            try
+            {
+                var friends = await _friendsService.GetFriendRecentlyAddedAsync(Id);
+                if (friends is null || !friends.Any())
+                {
+                    _logger.LogInformation("No friends found for user with Id {UserId}", Id);
+                    return ApiResponseHelper.NotFound("No friends found.");
+                }
+                _logger.LogInformation("List friends retrieved successfully for user with Id {UserId}", Id);
+                return ApiResponseHelper.Success(friends, "Get friends recently add successfully.");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while retrieving recently added friends for user with Id {UserId}", Id);
+                return StatusCode(500, $"Error: {ex.InnerException?.Message}");
+			}
+        }
+
+        /// <summary>
+        /// Retrieves list friend base on hometown
+        /// </summary>
+        /// <param name="Id">The unique Id of the user.</param>
+        /// <returns>Returns list object if found.</returns>
+        /// <response code="200">List friends retrieved successfully.</response>
+        /// <response code="400">InvalId Id provIded.</response>
+        /// <response code="404">Friend not found.</response>
+        [HttpGet("hometown/{Id}")]
+        [SwaggerOperation(Summary = "Get list friend base on hometown for a user", Description = "Retrieves list friend base on hometown for a user by their unique Id.")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> GetFriendBaseOnHomeTown([FromRoute] string Id)
+        {
+            _logger.LogInformation("Getting list friend base on hometown with Id {UserId}", Id);
+            if (string.IsNullOrWhiteSpace(Id))
+            {
+                _logger.LogWarning("InvalId user Id provIded.");
+                return ApiResponseHelper.BadRequest("InvalId user Id.");
+            }
+            try
+            {
+                var friends = await _friendsService.GetFriendBaseOnHomeTownAsync(Id);
+                if (friends is null || !friends.Any())
+                {
+                    _logger.LogInformation("No friends found for user with Id {UserId}", Id);
+                    return ApiResponseHelper.NotFound("No friends found.");
+                }
+                _logger.LogInformation("List friends retrieved successfully for user with Id {UserId}", Id);
+                return ApiResponseHelper.Success(friends, "Get friends base on hometown successfully.");
+            }
+            catch(Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while retrieving friends based on hometown for user with Id {UserId}", Id);
+                return StatusCode(500, $"Error: {ex.InnerException?.Message}");
+			}
+        }
+
+        /// <summary>
+        /// Check friend ship
+        /// </summary>
+        /// <param name="userId">The unique userId of the user</param>
+        /// <param name="targetUserId">The unique userId of the user</param>
+        /// <returns>Status friend ship of user</returns>
+        /// <response code="200">Status retrieved successfully.</response>
+        /// <response code="400">InvalId Id provIded.</response>
+        [HttpGet("check-friendship/{userId}/{targetUserId}")]
+        [SwaggerOperation(Summary = "Check friend ship between two user", Description = "Retrives the status base their unique of userId and targetUserId")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> CheckFriendshipAsync(string userId, string targetUserId)
+        {
+            if (string.IsNullOrWhiteSpace(userId))
+            {
+                _logger.LogWarning("InvalId input data");
+                return ApiResponseHelper.BadRequest("InvalId input data.");
+            }
+            try
+            {
+                var status = await _friendsService.CheckFriendshipAsync(userId, targetUserId);
+                _logger.LogInformation($"Status: {status}");
+                switch (status)
+                {
+                    case FriendShipStatus.Friends:
+                        return ApiResponseHelper.Success(status, "Friends");
+                    case FriendShipStatus.Pending:
+                        return ApiResponseHelper.Success(status, "Pending");
+                    case FriendShipStatus.Rejected:
+                        return ApiResponseHelper.Success(status, "Reject");
+                    default:
+                        return ApiResponseHelper.Success(status, "None");
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while checking friendship between userId {UserId} and targetUserId {TargetUserId}", userId, targetUserId);
+                return StatusCode(500, $"Error: {ex.InnerException?.Message}");
+			}
+        }
+
+        /// <summary>
+        /// Unfriend 
+        /// </summary>
+        /// <param name="userAId">The unique Id of the user</param>
+        /// <param name="userBId">The unique Id of the user</param>
+        /// <response code="200">Unfriend successfully.</response>
+        /// <response code="400">InvalId Id provIded.</response>
+        [HttpDelete("unfriend/{userAId}/{userBId}")]
+        [SwaggerOperation(Summary = "Unfriend base on userAId and userBId")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> Unfriend(string userAId, string userBId)
+        {
+            _logger.LogInformation("Unfriend based on userAId {userAId} and userBId {userBId}", userAId, userBId);
+            if (string.IsNullOrWhiteSpace(userAId) || string.IsNullOrWhiteSpace(userBId))
+            {
+                _logger.LogWarning("InvalId input data");
+                return ApiResponseHelper.BadRequest("InvalId input data");
+            }
+            try
+            {
+                var result = await _friendsService.DeleteFriendsAsync(userAId, userBId);
+                _logger.LogInformation("Unfriend successfully.");
+                return ApiResponseHelper.Success("Unfriend successfully");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while unfriending between userAId {UserAId} and userBId {UserBId}", userAId, userBId);
+                return StatusCode(500, $"Error: {ex.InnerException?.Message}");
+			}
+        }
     }
 }

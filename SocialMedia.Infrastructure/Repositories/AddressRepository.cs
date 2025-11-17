@@ -14,36 +14,36 @@ namespace SocialMedia.Infrastructure.Repositories
             _context = context;
         }
 
-        public async Task<List<Address>> GetAllAddressAsync()
+        public async Task<List<Address>?> GetAllAddressAsync()
         {
-            return await _context.addresses.ToListAsync();
+            return await _context.Addresses.ToListAsync();
         }
 
-        public async Task<Address> GetAddressByIdAsync(int id)
+        public async Task<Address?> GetAddressByIdAsync(int Id)
         {
-            return await _context.addresses.FindAsync(id);
+            return await _context.Addresses.FindAsync(Id);
         }
 
         public async Task<Address?> UpdateAddressAsync(Address address)
         {
-            _context.addresses.Update(address);
+            _context.Addresses.Update(address);
             await _context.SaveChangesAsync();
             return address;
         }
 
-        public async Task<bool> DeleteAddressAsync(int id)
+        public async Task<bool> DeleteAddressAsync(int Id)
         {
-            var Address = await _context.addresses.FindAsync(id);
+            var Address = await _context.Addresses.FindAsync(Id);
             if (Address is null)
                 return false;
-            _context.addresses.Remove(Address);
+            _context.Addresses.Remove(Address);
             await _context.SaveChangesAsync();
             return true;
         }
 
         public async Task<Address?> AddAddressAsync(Address address)
         {
-            await _context.addresses.AddAsync(address);
+            _context.Addresses.AddAsync(address);
             await _context.SaveChangesAsync();
             return address;
         }

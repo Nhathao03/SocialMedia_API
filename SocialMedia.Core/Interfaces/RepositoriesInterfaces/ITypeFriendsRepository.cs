@@ -6,9 +6,9 @@ namespace SocialMedia.Infrastructure.Repositories
     public interface ITypeFriendsRepository
     {
         Task<IEnumerable<Type_Friends>> GetAllTypeFriends();
-        Task<Type_Friends> GetTypeFriendsById(int id);
+        Task<Type_Friends> GetTypeFriendsById(int Id);
         Task AddTypeFriends(Type_Friends TypeFriends);
         Task UpdateTypeFriends(Type_Friends TypeFriends);
-        Task DeleteTypeFriends(int id);
+        Task DeleteTypeFriends(int Id);
     }
 }

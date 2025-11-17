@@ -1,11 +1,14 @@
-﻿namespace SocialMedia.Core.Entities.Entity
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace SocialMedia.Core.Entities.Entity
 {
     public class UserLogins
     {
+        [Key]
         public int Id { get; set; }
-        public string LoginProvider { get; set; }
-        public string ProviderKey { get; set; }
-        public string ProviderDisplayName { get; set; }
+        public string LoginProvIder { get; set; }
+        public string ProvIderKey { get; set; }
+        public string ProvIderDisplayName { get; set; }
         public string UserId { get; set; }
     }
 }

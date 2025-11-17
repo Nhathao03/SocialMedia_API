@@ -1,14 +1,15 @@
-﻿using SocialMedia.Core.Entities;
-using SocialMedia.Core.Entities.DTO;
+﻿using SocialMedia.Core.DTO.Notification;
+using SocialMedia.Core.Entities;
 
 namespace SocialMedia.Core.Services
 {
     public interface INotificationService
     {
-        Task<int> GetNotificationCount(string userId);
-        Task MarkAllAsRead(string userId);
-        Task CreateNotification(NotificationDTO model);
-        Task DeleteNotification(int notificationId);
-
+        Task<IEnumerable<RetriveNotificationDTO>?> GetNotificationsByUserIdAsync(string userId);
+        Task<IEnumerable<RetriveNotificationDTO>?> GetUnreadNotificationsAsync(string userId);
+        Task<int> GetUnreadCountAsync(string userId);
+        Task MarkAsReadAsync(int Id);
+        Task MarkAllAsReadAsync(string userId);
+        Task<RetriveNotificationDTO?> CreateNotificationAsync(NotificationCreateDTO dto);
     }
 }

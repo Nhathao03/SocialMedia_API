@@ -5,11 +5,11 @@ namespace SocialMedia.Infrastructure.Repositories
 {
     public interface IReportRepository
     {
-        Task CreateReport(Report model);
-        Task<IEnumerable<Report>> GetAllReports();
-        Task DeleteReport(int reportId);
-        Task<Report> GetReportById(int reportId);
-        Task MarkReportAsReviewed(int reportId);
-        Task<IEnumerable<Report>> GetReportsByUserId(string userId);
+        Task<Report?> AddAsync(Report model);
+        Task<IEnumerable<Report?>?> GetAllAsync();
+        Task DeleteAsync(int Id);
+        Task<Report?> UpdateAsync(Report report);
+        Task<Report?> GetByIdAsync(int Id);
+        Task<IEnumerable<Report?>?> GetByUserIdAsync(string userId);
     }
 }

@@ -5,12 +5,11 @@ namespace SocialMedia.Core.Services
 {
     public interface IPostService
     {
-        Task<IEnumerable<Post>> GetAllPostsAsync();
-        Task<Post> GetPostByIdAsync(int id);
-        Task<Post> AddPostAsync(PostDTO postDTO);
-        Task UpdatePostAsync(Post post);
-        Task DeletePostAsync(int id);
-        Task<IEnumerable<PostDTO>> GetPostsByUserIDAsync(string userID);
-        Task<IEnumerable<PostDTO>> GetRecentPostsAsync(int page, int pageSize);
+        Task<Post?> GetPostByIdAsync(int Id);
+        Task<RetrivePostDTO?> AddPostAsync(CreatePostDTO dto);
+        Task<RetrivePostDTO?> UpdatePostAsync(int Id, CreatePostDTO dto);
+        Task<bool> DeletePostAsync(int Id);
+        //Task<IEnumerable<RetrivePostDTO>?> GetPostsByUserIdAsync(string userId);
+        Task<IEnumerable<RetrivePostDTO>?> GetRecentPostsAsync(int page, int pageSize);
     }
 }

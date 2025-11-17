@@ -16,26 +16,26 @@ namespace SocialMedia.Infrastructure.Repositories
 
         public async Task<IEnumerable<Type_Friends>> GetAllTypeFriends()
         {
-            return await _context.type_friends.ToListAsync();
+            return await _context.TypeFriends.ToListAsync();
         }
 
-        public async Task<Type_Friends> GetTypeFriendsById(int id)
+        public async Task<Type_Friends> GetTypeFriendsById(int Id)
         {
-            return await _context.type_friends.FirstOrDefaultAsync(p => p.ID == id);
+            return await _context.TypeFriends.FirstOrDefaultAsync(p => p.Id == Id);
         }
 
         public async Task UpdateTypeFriends(Type_Friends TypeFriends)
         {
-            _context.type_friends.Update(TypeFriends);
+            _context.TypeFriends.Update(TypeFriends);
             await _context.SaveChangesAsync();
         }
 
-        public async Task DeleteTypeFriends(int id)
+        public async Task DeleteTypeFriends(int Id)
         {
-            var TypeFriends = await _context.type_friends.FindAsync(id);
+            var TypeFriends = await _context.TypeFriends.FindAsync(Id);
             if (TypeFriends != null)
             {
-                _context.type_friends.Remove(TypeFriends);
+                _context.TypeFriends.Remove(TypeFriends);
                 await _context.SaveChangesAsync();
             }
         }

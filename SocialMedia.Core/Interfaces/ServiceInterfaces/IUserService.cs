@@ -6,11 +6,11 @@ namespace SocialMedia.Core.Services
 {
     public interface IUserService
     {
-        Task<IEnumerable<User>> GetAllUsersAsync();
-        Task<User> GetUserByIdAsync(string id);
+        Task<IEnumerable<User?>?> GetAllUsersAsync();
+        Task<User?> GetUserByIdAsync(string Id);
         Task UpdateUserAsync(User user);
-        Task<bool> DeleteUserAsync(string id);
-        Task<AuthResultDTO> RegisterAccountAsync (RegisterDTO registerDTO);
+        Task<bool> DeleteUserAsync(string Id);
+        Task<AuthResultDTO?> RegisterAccountAsync (RegisterDTO registerDTO);
 
         //Profile
         Task<ProfileDTO?> GetProfileAsync(string userId);
@@ -22,8 +22,8 @@ namespace SocialMedia.Core.Services
         Task<bool> IsPhoneExistsAsync(string phoneNumber);
         Task<string> GenerateAccessTokenAsync(string userId);
         Task<string> GenerateRefreshTokenAsync(User user);
-        Task<User> GetUserByEmailAsync(string email);
-        Task<AuthResultDTO> LoginAsync(LoginDTO model);
+        Task<User?> GetUserByEmailAsync(string email);
+        Task<AuthResultDTO?> LoginAsync(LoginDTO model);
         User? GetUserByRefreshToken(string refreshToken);
     }
 }

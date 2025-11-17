@@ -1,14 +1,14 @@
-﻿using SocialMedia.Core.Entities.RoleEntity;
+﻿ using SocialMedia.Core.Entities.RoleEntity;
 
 namespace SocialMedia.Infrastructure.Repositories
 {
     public interface IRoleRepository
     {
-        Task<IEnumerable<Role>> GetAllRole();
-        Task<Role> GetRoleById(string id);
-        Task AddRole(Role role);
-        Task UpdateRole(Role role);
-        Task DeleteRole(int id);
-        Task<string> GetRoleIdUser();
+        Task<IEnumerable<Role?>?> GetAllRole();
+        Task<Role?> GetRoleById(string Id);
+        Task<Role?> AddRole(Role role);
+        Task<Role?> UpdateRole(Role role);
+        Task<bool> DeleteRole(string Id);
+        Task<string?> GetRoleIdUser();
     }
 }

@@ -1,45 +1,79 @@
-﻿using SocialMedia.Infrastructure.Repositories;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.SignalR;
+using Microsoft.Extensions.Logging;
+using SocialMedia.Core.DTO.Notification;
 using SocialMedia.Core.Entities;
-using SocialMedia.Core.Entities.DTO;
+using SocialMedia.Core.Interfaces.ServiceInterfaces;
 
 namespace SocialMedia.Core.Services
 {
     public class NotificationService : INotificationService
     {
-        private readonly INotificationRepository _repository;
-        public NotificationService(INotificationRepository repository)
+        private readonly IUnitOfWork _unitOfWork;
+        private readonly IMapper _mapper;
+        private readonly ILogger<NotificationService> _logger;
+
+        public NotificationService(IUnitOfWork unitOfWork, IMapper mapper, ILogger<NotificationService> logger)
         {
-            _repository = repository;
-        }
-        public async Task CreateNotification(NotificationDTO model)
-        {
-            var notification = new Notification
-            {
-                UserId = model.UserId,
-                Message = model.Message,
-                IsRead = false,
-                CreatedAt = DateTime.UtcNow
-            };
-            await _repository.CreateNotification(notification);
-        }
-        public async Task<int> GetNotificationCount(string userId)
-        {
-            var notifications = await _repository.GetNotificationsByUserId(userId);
-            return notifications.Count(n => !n.IsRead);
+            _unitOfWork = unitOfWork;
+            _mapper = mapper;
+            _logger = logger;
         }
 
-        public async Task MarkAllAsRead(string userId)
+        public async Task<IEnumerable<RetriveNotificationDTO>?> GetNotificationsByUserIdAsync(string userId)
         {
-            var notifications = await _repository.GetNotificationsByUserId(userId);
-            foreach (var notification in notifications.Where(n => !n.IsRead))
-            {
-                await _repository.MarkAsRead(notification.Id);
-            }
+            _logger.LogInformation("Retrieving notifications for user {userId}", userId);
+            if(userId == null)
+                throw new ArgumentNullException(nameof(userId), "User Id cannot be null.");
+            var notifications = await _unitOfWork.NotificationRepository.GetByUserIdAsync(userId);
+            _logger.LogDebug("Retrieved {Count} notifications for user {userId}", notifications?.Count(), userId);
+            return _mapper.Map<IEnumerable<RetriveNotificationDTO>>(notifications?.OrderByDescending(n => n.CreatedAt));
         }
 
-        public async Task DeleteNotification(int notificationId)
+        public async Task<IEnumerable<RetriveNotificationDTO>?> GetUnreadNotificationsAsync(string userId)
         {
-            await _repository.DeleteNotification(notificationId);
+            _logger.LogInformation("Retrieving unread notifications for user {userId}", userId);
+            if(userId is null)
+                throw new ArgumentNullException(nameof(userId), "User Id cannot be null.");
+            var notifications = await _unitOfWork.NotificationRepository.GetUnreadByUserIdAsync(userId);
+            _logger.LogDebug("Retrieved {Count} unread notifications for user {userId}", notifications?.Count(), userId);
+            return _mapper.Map<IEnumerable<RetriveNotificationDTO>>(notifications?.OrderByDescending(n => n.CreatedAt));
+        }
+
+        public async Task<int> GetUnreadCountAsync(string userId)
+        {
+            _logger.LogInformation("Counting unread notifications for user {userId}", userId);
+            if(userId is null)
+                throw new ArgumentNullException(nameof(userId), "User Id cannot be null.");
+            var notifications = await _unitOfWork.NotificationRepository.GetUnreadByUserIdAsync(userId);
+            _logger.LogDebug("User {userId} has {Count} unread notifications", userId, notifications?.Count());
+            return notifications.Count();
+        }
+
+        public async Task MarkAsReadAsync(int Id)
+        {
+            _logger.LogInformation("Marking notification {Id} as read", Id);
+            await _unitOfWork.NotificationRepository.MarkAsReadAsync(Id);
+        }
+
+        public async Task MarkAllAsReadAsync(string userId)
+        {
+            _logger.LogInformation("Marking all notifications as read for user {userId}", userId);
+            await _unitOfWork.NotificationRepository.MarkAllAsReadAsync(userId);
+        }
+
+        public async Task<RetriveNotificationDTO?> CreateNotificationAsync(NotificationCreateDTO dto)
+        {
+            _logger.LogInformation("Creating new notification for user {userId}", dto.SenderId);
+            if(dto is null)
+                throw new ArgumentNullException(nameof(NotificationCreateDTO), "Notification data is required.");
+            if (string.IsNullOrWhiteSpace(dto.Content))
+                throw new ArgumentException("Notification content cannot be empty.", nameof(dto.Content));
+            var notification = _mapper.Map<Notification>(dto);
+            _logger.LogDebug("Notification details: {@notification}", notification);
+            await _unitOfWork.NotificationRepository.AddNotificationAsync(notification);
+            _logger.LogInformation("Notification created with Id {NotificationId}", notification.Id);
+            return _mapper.Map<RetriveNotificationDTO>(notification);
         }
     }
 }

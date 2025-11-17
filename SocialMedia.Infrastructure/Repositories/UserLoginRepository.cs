@@ -15,26 +15,26 @@ namespace SocialMedia.Infrastructure.Repositories
 
         public async Task<IEnumerable<UserLogins>> GetAllUserLogin()
         {
-            return await _context.usersLogins.ToListAsync();
+            return await _context.UserLogins.ToListAsync();
         }
 
-        public async Task<UserLogins> GetUserLoginById(int id)
+        public async Task<UserLogins> GetUserLoginById(int Id)
         {
-            return await _context.usersLogins.FirstOrDefaultAsync(p => p.Id == id);
+            return await _context.UserLogins.FirstOrDefaultAsync(p => p.Id == Id);
         }
 
         public async Task UpdateUserLogin(UserLogins userLogins)
         {
-            _context.usersLogins.Update(userLogins);
+            _context.UserLogins.Update(userLogins);
             await _context.SaveChangesAsync();
         }
 
-        public async Task DeleteUserLogin(int id)
+        public async Task DeleteUserLogin(int Id)
         {
-            var UserLogin = await _context.usersLogins.FindAsync(id);
+            var UserLogin = await _context.UserLogins.FindAsync(Id);
             if (UserLogin != null)
             {
-                _context.usersLogins.Remove(UserLogin);
+                _context.UserLogins.Remove(UserLogin);
                 await _context.SaveChangesAsync();
             }
         }

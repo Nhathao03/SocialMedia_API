@@ -11,6 +11,7 @@ using AutoMapper;
 using Microsoft.Extensions.DependencyInjection;
 using SocialMedia.Core.Mapping;
 using SocialMedia.Core.Interfaces.ServiceInterfaces;
+using Social_Media.Hubs;
 
 namespace SocialMedia.API
 {
@@ -123,6 +124,7 @@ namespace SocialMedia.API
                 app.UseSwaggerUI();
             }
 
+            app.MapHub<NotificationHub>("/hubs/notificationHub");
             app.UseCors("AllowAll");
             app.UseHttpsRedirection();
             app.UseStaticFiles();

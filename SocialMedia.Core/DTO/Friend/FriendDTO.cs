@@ -2,9 +2,9 @@
 {
     public class FriendDTO
     {
-        public string UserID { get; set; }
-        public string FriendID { get; set; }
+        public string UserId { get; set; }
+        public string FriendId { get; set; }
         public DateTime? CreatedDate { get; set; } = DateTime.UtcNow;
-        public int Type_FriendsID { get; set; }
+        public int Type_FriendsId { get; set; }
     }
 }

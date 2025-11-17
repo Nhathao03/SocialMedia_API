@@ -6,9 +6,9 @@ namespace SocialMedia.Infrastructure.Repositories
     public interface IUserLoginRepository
     {
         Task<IEnumerable<UserLogins>> GetAllUserLogin();
-        Task<UserLogins> GetUserLoginById(int id);
+        Task<UserLogins> GetUserLoginById(int Id);
         Task UpdateUserLogin(UserLogins userLogins);
-        Task DeleteUserLogin(int id);
+        Task DeleteUserLogin(int Id);
         Task AddUserLogin(UserLogins userLogins);
     }
 }

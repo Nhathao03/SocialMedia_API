@@ -9,11 +9,9 @@ namespace SocialMedia.Infrastructure.Repositories
         private readonly AppDbContext _context;
         public IAddressRepository AddressRepository { get; }
         public ICommentRepository CommentRepository { get; }
-        public ICommentReactionsRepository CommentReactionsRepository { get; }
-        public ICommentRepliesRepository CommentRepliesRepository { get; }
         public IFriendRepository FriendRepository { get; }
         public IFriendRequestRepository FriendRequestRepository { get; }
-        public ILikeRepository LikeRepository { get; }
+        public ILikeRepository LikePostRepository { get; }
         public IMessageRepository MessageRepository { get; }
         public INotificationRepository NotificationRepository { get; }
         public IPostImageRepository PostImageRepository { get; }
@@ -32,11 +30,9 @@ namespace SocialMedia.Infrastructure.Repositories
             _context = context;
             AddressRepository = new AddressRepository(_context);
             CommentRepository = new CommentRepository(_context);
-            CommentReactionsRepository = new CommentReactionsRepository(_context);
-            CommentRepliesRepository = new CommentRepliesRepository(_context);
             FriendRepository = new FriendRepository(_context);
             FriendRequestRepository = new FriendRequestRepository(_context);
-            LikeRepository = new LikeRepository(_context);
+            LikePostRepository = new LikeRepository(_context);
             MessageRepository = new MessageRepository(_context);
             NotificationRepository = new NotificationRepository(_context);
             PostImageRepository = new PostImageRepository(_context);

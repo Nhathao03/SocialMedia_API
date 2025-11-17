@@ -16,34 +16,34 @@ namespace SocialMedia.Infrastructure.Repositories
 
         public async Task<List<PostCategory>> GetAllPostCategoryAsync()
         {
-            return await _context.post_category.ToListAsync();
+            return await _context.PostCategories.ToListAsync();
         }
 
-        public async Task<PostCategory?> GetPostCategoryByIdAsync(int id)
+        public async Task<PostCategory?> GetPostCategoryByIdAsync(int Id)
         {
-            return await _context.post_category.FindAsync(id);
+            return await _context.PostCategories.FindAsync(Id);
         }
 
         public async Task<PostCategory?> AddPostCategoryAsync(PostCategory post)
         {
-            await _context.post_category.AddAsync(post);
+            await _context.PostCategories.AddAsync(post);
             await _context.SaveChangesAsync();
             return post;
         }
 
         public async Task<PostCategory?> UpdatePostCategoryAsync(PostCategory post)
         {
-            _context.post_category.Update(post);
+            _context.PostCategories.Update(post);
             await _context.SaveChangesAsync();
             return post;
         }
 
-        public async Task<bool> DeletePostCategoryAsync(int id)
+        public async Task<bool> DeletePostCategoryAsync(int Id)
         {
-            var post = await _context.post_category.FindAsync(id);
+            var post = await _context.PostCategories.FindAsync(Id);
             if (post is null)
                 return false;
-            _context.post_category.Remove(post);
+            _context.PostCategories.Remove(post);
             await _context.SaveChangesAsync();
             return true;
         }

@@ -18,9 +18,9 @@ namespace SocialMedia.Core.Services
             return await _roleCheckRepository.GetAllRoleCheck();
         }
 
-        public async Task<RoleCheck> GetRoleCheckByIdAsync(int id)
+        public async Task<RoleCheck> GetRoleCheckByIdAsync(int Id)
         {
-            return await _roleCheckRepository.GetRoleCheckById(id);
+            return await _roleCheckRepository.GetRoleCheckById(Id);
         }
 
         public async Task AddRoleCheckAsync(RoleCheckDTO modelDTO)
@@ -28,8 +28,8 @@ namespace SocialMedia.Core.Services
             var roleCheckEntity = new RoleCheck
             {
                 Id = modelDTO.Id,
-                UserID = modelDTO.UserId,
-                RoleID = modelDTO.RoleId
+                UserId = modelDTO.UserId,
+                RoleId = modelDTO.RoleId
             };
             await _roleCheckRepository.AddRoleCheck(roleCheckEntity);
         }
@@ -41,14 +41,14 @@ namespace SocialMedia.Core.Services
             {
                 throw new KeyNotFoundException($"RoleCheck with Id {modelDTO.Id} not exits.");
             }
-            existingroleCheck.RoleID = modelDTO.RoleId;
+            existingroleCheck.RoleId = modelDTO.RoleId;
 
             await _roleCheckRepository.UpdateRoleCheck(existingroleCheck);
         }
 
-        public async Task DeleteRoleCheckAsync(int id)
+        public async Task DeleteRoleCheckAsync(int Id)
         {
-            await _roleCheckRepository.DeleteRoleCheck(id);
+            await _roleCheckRepository.DeleteRoleCheck(Id);
         }
         public async Task DeleteRoleCheckByUserIdAsync(string userId)
         {

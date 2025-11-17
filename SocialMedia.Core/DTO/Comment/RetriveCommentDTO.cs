@@ -8,7 +8,7 @@ namespace SocialMedia.Core.DTO.Comment
 {
     public class RetriveCommentDTO
     {
-        public int ID { get; set; }
+        public int Id { get; set; }
         public string? Image { get; set; }
         public int PostId { get; set; }
         public string UserId { get; set; }
